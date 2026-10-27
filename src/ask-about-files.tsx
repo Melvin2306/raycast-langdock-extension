@@ -1,4 +1,14 @@
-import { Action, ActionPanel, Form, Icon, getSelectedFinderItems, showToast, Toast, useNavigation } from "@raycast/api";
+import {
+  Action,
+  ActionPanel,
+  Form,
+  Icon,
+  LaunchProps,
+  getSelectedFinderItems,
+  showToast,
+  Toast,
+  useNavigation,
+} from "@raycast/api";
 import { usePromise } from "@raycast/utils";
 import { realpathSync, statSync } from "node:fs";
 import { useState } from "react";
@@ -10,8 +20,22 @@ import { apiKey } from "./lib/langdock";
 /** Total size of all files. Inline files are resent with every follow-up, so this bounds each request. */
 const MAX_TOTAL_BYTES = 20 * 1024 * 1024;
 
-export default function Command() {
-  return apiKey() ? <AskAboutFiles /> : <ApiKeyMissing />;
+/** Set when another command (e.g. Ask About Screenshot) opens this one with files. */
+export interface AskAboutFilesContext {
+  files?: string[];
+  question?: string;
+  /** Send right away instead of showing the form. */
+  send?: boolean;
+}
+
+export default function Command(props: LaunchProps<{ launchContext?: AskAboutFilesContext }>) {
+  if (!apiKey()) return <ApiKeyMissing />;
+  const context = props.launchContext;
+  const files = (context?.files ?? []).filter((path) => statSync(path, { throwIfNoEntry: false })?.isFile());
+  if (context?.send && files.length > 0 && context.question) {
+    return <Chat initialPrompt={context.question} filePaths={files} />;
+  }
+  return <AskAboutFiles files={files.length > 0 ? files : undefined} question={context?.question} />;
 }
 
 async function finderSelection(): Promise<string[]> {
@@ -22,9 +46,10 @@ async function finderSelection(): Promise<string[]> {
   }
 }
 
-function AskAboutFiles() {
+function AskAboutFiles(props: { files?: string[]; question?: string }) {
   const { push } = useNavigation();
-  const { data: selectedFiles, isLoading } = usePromise(finderSelection);
+  // Files passed in by another command take the place of the Finder selection.
+  const { data: selectedFiles, isLoading } = usePromise(async () => props.files ?? (await finderSelection()));
   const [model, setModel] = useState<string>();
 
   async function submit(values: { files: string[]; question: string }) {
@@ -64,7 +89,12 @@ function AskAboutFiles() {
         defaultValue={selectedFiles}
         info="Files selected in Finder are added automatically."
       />
-      <Form.TextArea id="question" title="Question" placeholder="Summarize these files." />
+      <Form.TextArea
+        id="question"
+        title="Question"
+        placeholder="Summarize these files."
+        defaultValue={props.question}
+      />
       <ModelDropdown value={model} onChange={setModel} />
     </Form>
   );

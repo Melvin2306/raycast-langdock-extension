@@ -1,6 +1,7 @@
 import { Action, ActionPanel, Color, Form, Icon, Keyboard, List, showToast, Toast, useNavigation } from "@raycast/api";
 import { showFailureToast, useCachedPromise, useLocalStorage } from "@raycast/utils";
 import { ApiKeyMissing } from "./components/ApiKeyMissing";
+import { AgentForm } from "./components/AgentForm";
 import { AskForm, Chat } from "./components/Chat";
 import { AgentListItem, apiKey, getAgent, LangdockError, listAgents, webAppUrl } from "./lib/langdock";
 import { displayName } from "./lib/models";
@@ -95,6 +96,10 @@ function Agents() {
 
   async function ask(agent: AgentRow) {
     await setRecent({ ...recent, [agent.id]: new Date().toISOString() });
+    if (agent.inputType === "STRUCTURED") {
+      push(<AgentForm agent={agent} />);
+      return;
+    }
     push(
       <AskForm
         title={agent.name}
@@ -128,15 +133,27 @@ function Agents() {
       subtitle={agent.description ?? undefined}
       keywords={[agent.description ?? "", agent.owner ?? ""]}
       accessories={[
-        ...(agent.inputType && agent.inputType !== "PROMPT"
-          ? [{ tag: { value: "Form input", color: Color.Orange }, tooltip: "This agent expects structured input" }]
+        ...(agent.inputType === "STRUCTURED"
+          ? [{ tag: { value: "Form", color: Color.Blue }, tooltip: "Opens a form" }]
+          : []),
+        ...(agent.inputType && !["PROMPT", "STRUCTURED"].includes(agent.inputType)
+          ? [
+              {
+                tag: { value: "Automated", color: Color.Orange },
+                tooltip: "Usually runs from an integration, schedule or webhook",
+              },
+            ]
           : []),
         ...(agent.model ? [{ tag: agent.model === "auto" ? "Auto" : displayName(agent.model) }] : []),
         ...(agent.owner ? [{ icon: Icon.Person, tooltip: `Owner: ${agent.owner}` }] : []),
       ]}
       actions={
         <ActionPanel>
-          <Action title="Ask Agent" icon={Icon.Bubble} onAction={() => ask(agent)} />
+          <Action
+            title={agent.inputType === "STRUCTURED" ? "Fill in Form" : "Ask Agent"}
+            icon={agent.inputType === "STRUCTURED" ? Icon.List : Icon.Bubble}
+            onAction={() => ask(agent)}
+          />
           <Action.OpenInBrowser
             title="Open Agent in Langdock"
             url={`${webAppUrl()}/agents/${agent.id}/edit`}

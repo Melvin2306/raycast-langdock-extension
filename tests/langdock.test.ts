@@ -2,7 +2,12 @@ import { strict as assert } from "node:assert";
 import { createServer, IncomingMessage, ServerResponse } from "node:http";
 import { AddressInfo } from "node:net";
 import { after, before, test } from "node:test";
+import { writeFileSync } from "node:fs";
+import { tmpdir } from "node:os";
+import { join } from "node:path";
 import {
+  createScheduledTask,
+  executeIntegrationAction,
   LangdockError,
   listAgents,
   listImageModels,
@@ -10,6 +15,7 @@ import {
   parseImageModels,
   streamChat,
   StreamEvent,
+  uploadToKnowledgeBase,
   webAppUrl,
 } from "../src/lib/langdock";
 import { preferences } from "./raycast-mock";
@@ -197,4 +203,41 @@ test("agent listing stops on an empty page with a cursor", async () => {
   const agents = await listAgents();
   assert.equal(agents.length, 1);
   assert.equal(calls, 2);
+});
+
+test("files are uploaded to a knowledge base as multipart with an optional source URL", async () => {
+  const file = join(tmpdir(), "ld-kb-test.md");
+  writeFileSync(file, "# Handbook");
+  let contentType = "";
+  handler = (req, _body, res) => {
+    contentType = req.headers["content-type"] ?? "";
+    json(res, 200, { status: "success", result: { id: "att-1" } });
+  };
+  assert.equal(await uploadToKnowledgeBase("kb 1", file, "https://wiki.example/handbook"), "att-1");
+  const sent = requests.at(-1)!;
+  assert.equal(sent.url, "/knowledge/kb%201");
+  assert.match(contentType, /^multipart\/form-data; boundary=/);
+  assert.match(sent.body, /name="file"; filename="ld-kb-test.md"/);
+  assert.match(sent.body, /name="url"\r\n\r\nhttps:\/\/wiki.example\/handbook/);
+});
+
+test("integration actions are executed with the connection and inputs", async () => {
+  handler = (_req, _body, res) =>
+    json(res, 200, { success: true, authError: false, result: { ok: 1 }, durationMs: 12 });
+  const result = await executeIntegrationAction({
+    integrationId: "i/1",
+    actionId: "a1",
+    connectionId: "c1",
+    inputs: { x: 1 },
+  });
+  assert.equal(result.success, true);
+  assert.equal(requests.at(-1)!.url, "/integrations/v1/i%2F1/actions/a1/execute");
+  assert.deepEqual(JSON.parse(requests.at(-1)!.body), { connectionId: "c1", inputs: { x: 1 } });
+});
+
+test("scheduled tasks are created with the validated fields", async () => {
+  handler = (_req, body, res) => json(res, 201, { automation: { ...JSON.parse(body), id: "t1" } });
+  const task = await createScheduledTask({ name: "Digest", prompt: "p", frequency: "DAILY", timeOfDay: "09:00" });
+  assert.equal(task.id, "t1");
+  assert.equal(requests.at(-1)!.url, "/automations/v1");
 });

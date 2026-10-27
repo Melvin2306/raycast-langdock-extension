@@ -1,6 +1,7 @@
 import { Action, ActionPanel, Icon, List } from "@raycast/api";
 import { showFailureToast, useCachedPromise } from "@raycast/utils";
 import { useState } from "react";
+import { AddToKnowledgeBase } from "./components/KnowledgeUpload";
 import { ApiKeyMissing } from "./components/ApiKeyMissing";
 import { Chat } from "./components/Chat";
 import { apiKey, KnowledgeResult, listKnowledgeBases, searchKnowledge } from "./lib/langdock";
@@ -49,7 +50,21 @@ function SearchKnowledge() {
               icon={Icon.Folder}
               title={base.name}
               subtitle={base.description ?? undefined}
-              accessories={[{ text: `${base.fileCount} file${base.fileCount === 1 ? "" : "s"}` }]}
+              accessories={[
+                { text: `${base.fileCount} file${base.fileCount === 1 ? "" : "s"}` },
+                ...(base.role === "EDITOR" ? [] : [{ tag: "View only" }]),
+              ]}
+              actions={
+                base.role === "EDITOR" ? (
+                  <ActionPanel>
+                    <Action.Push
+                      title="Add Files"
+                      icon={Icon.Upload}
+                      target={<AddToKnowledgeBase knowledgeBaseId={base.id} />}
+                    />
+                  </ActionPanel>
+                ) : undefined
+              }
             />
           ))}
         </List.Section>

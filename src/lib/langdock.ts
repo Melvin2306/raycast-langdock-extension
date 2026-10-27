@@ -175,6 +175,17 @@ export async function resolveModelId(wanted: string): Promise<string> {
 
 // Agents
 
+export type AgentInputType = "PROMPT" | "STRUCTURED" | "INTEGRATION" | "SCHEDULED" | "WEBHOOK";
+
+/** A field of an agent's input form (agents with input type STRUCTURED). */
+export interface AgentInputField {
+  type: "TEXT" | "MULTI_LINE_TEXT" | "NUMBER" | "CHECKBOX" | "FILE" | "SELECT" | "MULTI_SELECT" | "DATE" | "EMAIL";
+  label: string;
+  description: string | null;
+  required: boolean;
+  order: number;
+}
+
 export interface Agent {
   id: string;
   name: string;
@@ -182,6 +193,8 @@ export interface Agent {
   emojiIcon: string | null;
   model: string | null;
   conversationStarters: string[];
+  inputType?: AgentInputType;
+  inputFields?: AgentInputField[];
 }
 
 export interface AgentListItem {
@@ -191,7 +204,7 @@ export interface AgentListItem {
   emojiIcon: string | null;
   /** Deployment name, or "auto". */
   model: string | null;
-  inputType: "PROMPT" | "STRUCTURED" | "INTEGRATION" | "SCHEDULED" | "WEBHOOK";
+  inputType: AgentInputType;
   owner: { id: string; name: string | null; email: string } | null;
   disabled: boolean;
   updatedAt: string | null;
@@ -300,6 +313,27 @@ export async function listScheduledTasks(): Promise<ScheduledTask[]> {
   return json.automations;
 }
 
+export interface NewScheduledTask {
+  name: string;
+  prompt: string;
+  frequency: ScheduledTask["frequency"];
+  /** HH:MM, required unless the task is manual. */
+  timeOfDay?: string;
+  /** 0 = Sunday … 6 = Saturday. */
+  dayOfWeek?: number;
+  dayOfMonth?: number;
+  daysOfWeek?: number[];
+  timezone?: string;
+  assistantId?: string;
+}
+
+/** Creates a scheduled task. Needs the Scheduled Tasks API scope (workspace keys). */
+export async function createScheduledTask(task: NewScheduledTask): Promise<ScheduledTask> {
+  const response = await request("/automations/v1", { method: "POST", body: JSON.stringify(task) });
+  const json = (await response.json()) as { automation: ScheduledTask };
+  return json.automation;
+}
+
 export async function runScheduledTask(id: string): Promise<void> {
   await request(`/automations/v1/${encodeURIComponent(id)}/run`, { method: "POST" });
 }
@@ -331,6 +365,8 @@ export interface KnowledgeBase {
   description: string | null;
   fileCount: number;
   updatedAt: string;
+  /** EDITOR can upload files; USER can only search. */
+  role: "USER" | "EDITOR";
 }
 
 /** Only workspace keys get knowledge bases here; personal keys get an empty list. */
@@ -338,6 +374,92 @@ export async function listKnowledgeBases(): Promise<KnowledgeBase[]> {
   const response = await request("/knowledge?limit=100");
   const json = (await response.json()) as { result: { folders: KnowledgeBase[] } };
   return json.result.folders;
+}
+
+/** Uploads a file to a knowledge base. Langdock processes it in the background. */
+export async function uploadToKnowledgeBase(folderId: string, path: string, sourceUrl?: string): Promise<string> {
+  const form = new FormData();
+  form.append("file", await openAsBlob(path, { type: mediaType(path) }), basename(path));
+  if (sourceUrl) form.append("url", sourceUrl);
+  const response = await request(`/knowledge/${encodeURIComponent(folderId)}`, { method: "POST", body: form });
+  const json = (await response.json()) as { result?: { id?: string } };
+  return json.result?.id ?? "";
+}
+
+// Integrations (custom, MCP and A2A integrations shared with the API key)
+
+export interface IntegrationSummary {
+  id: string;
+  name: string;
+  description: string | null;
+  iconUrl: string | null;
+  integrationType: string;
+  actions: { id: string; name: string; description: string | null; requiresConfirmation: boolean }[];
+}
+
+export interface ActionInputField {
+  slug: string;
+  label: string;
+  type: "TEXT" | "MULTI_LINE_TEXT" | "PASSWORD" | "SELECT" | "NUMBER" | "BOOLEAN" | "VECTOR" | "OBJECT" | "FILE" | "ID";
+  description: string | null;
+  placeholder: string | null;
+  required: boolean;
+  order: number;
+  options: { label: string; value: string }[] | null;
+  allowMultiSelect: boolean | null;
+}
+
+export interface IntegrationAction {
+  id: string;
+  name: string;
+  description: string | null;
+  inputFields: ActionInputField[];
+}
+
+export interface IntegrationConnection {
+  id: string;
+  name: string | null;
+  valid: boolean;
+}
+
+export interface ActionResult {
+  success: boolean;
+  authError: boolean;
+  error?: unknown;
+  result?: unknown;
+  durationMs: number;
+}
+
+export async function listIntegrations(): Promise<IntegrationSummary[]> {
+  const response = await request("/integrations/v1/get");
+  const json = (await response.json()) as { integrations: IntegrationSummary[] };
+  return json.integrations;
+}
+
+export async function getIntegrationActions(integrationId: string): Promise<IntegrationAction[]> {
+  const response = await request(`/integrations/v1/${encodeURIComponent(integrationId)}`);
+  const json = (await response.json()) as { integration: { actions: IntegrationAction[] } };
+  return json.integration.actions;
+}
+
+export async function listIntegrationConnections(integrationId: string): Promise<IntegrationConnection[]> {
+  const response = await request(`/integrations/v1/${encodeURIComponent(integrationId)}/connections`);
+  const json = (await response.json()) as { connections: IntegrationConnection[] };
+  return json.connections;
+}
+
+export async function executeIntegrationAction(options: {
+  integrationId: string;
+  actionId: string;
+  connectionId: string;
+  inputs: Record<string, unknown>;
+}): Promise<ActionResult> {
+  const { integrationId, actionId, connectionId, inputs } = options;
+  const response = await request(
+    `/integrations/v1/${encodeURIComponent(integrationId)}/actions/${encodeURIComponent(actionId)}/execute`,
+    { method: "POST", body: JSON.stringify({ connectionId, inputs }) },
+  );
+  return (await response.json()) as ActionResult;
 }
 
 // Workflows
@@ -546,7 +668,7 @@ export const API_CAPABILITIES: ApiCapability[] = [
     id: "knowledge",
     title: "Knowledge Bases",
     scope: "Knowledge Folder API",
-    description: "Search Knowledge, file uploads in Ask About Files",
+    description: "Search Knowledge, Add to Knowledge Base, file uploads",
     docsUrl: "https://docs.langdock.com/en/developer/knowledge-folder-api/knowledge-folder-overview",
     probe: "/knowledge?limit=1",
   },
@@ -557,6 +679,14 @@ export const API_CAPABILITIES: ApiCapability[] = [
     description: "Search Meetings",
     docsUrl: "https://docs.langdock.com/en/developer/overview/api-introduction",
     probe: "/meetings/v1/list?limit=1",
+  },
+  {
+    id: "integrations",
+    title: "Integrations",
+    scope: "Integration API",
+    description: "Run Integration Action",
+    docsUrl: "https://docs.langdock.com/en/developer/integrations-api/integrations-overview",
+    probe: "/integrations/v1/get",
   },
   {
     id: "workflows",
@@ -570,7 +700,7 @@ export const API_CAPABILITIES: ApiCapability[] = [
     id: "automations",
     title: "Scheduled Tasks",
     scope: "Scheduled Tasks API",
-    description: "Manage Scheduled Tasks (workspace keys)",
+    description: "Manage and Create Scheduled Tasks (workspace keys)",
     docsUrl: "https://docs.langdock.com/en/developer/scheduled-tasks-api/scheduled-tasks-overview",
     probe: "/automations/v1?limit=1",
   },

@@ -2,10 +2,11 @@ import { Action, ActionPanel, Color, Icon, Keyboard, List, showToast, Toast } fr
 import { showFailureToast, useCachedPromise } from "@raycast/utils";
 import { useState } from "react";
 import { ApiKeyMissing } from "./components/ApiKeyMissing";
+import { ScheduledTaskForm } from "./components/ScheduledTaskForm";
 import { apiKey, listScheduledTasks, runScheduledTask, ScheduledTask, setScheduledTaskActive } from "./lib/langdock";
 import { sanitizeMarkdown } from "./lib/markdown";
 
-// Assumes JavaScript day numbering (0 = Sunday); the API docs don't say.
+// The API numbers days like cron: 0 = Sunday … 6 = Saturday.
 const DAYS = ["Sunday", "Monday", "Tuesday", "Wednesday", "Thursday", "Friday", "Saturday"];
 
 export default function Command() {
@@ -48,10 +49,20 @@ function ScheduledTasks() {
     }
   }
 
+  const createAction = (
+    <Action.Push
+      title="Create Scheduled Task"
+      icon={Icon.Plus}
+      shortcut={Keyboard.Shortcut.Common.New}
+      target={<ScheduledTaskForm onCreated={revalidate} />}
+    />
+  );
+
   return (
     <List isLoading={isLoading} isShowingDetail={isShowingDetail} searchBarPlaceholder="Search scheduled tasks…">
       <List.EmptyView
         icon={Icon.Calendar}
+        actions={<ActionPanel>{createAction}</ActionPanel>}
         title="No Scheduled Tasks"
         description="Scheduled tasks appear here. This needs a workspace API key with the Scheduled Tasks API scope; personal keys may not support it."
       />
@@ -106,6 +117,7 @@ function ScheduledTasks() {
                 shortcut={{ modifiers: ["cmd"], key: "d" }}
                 onAction={() => setIsShowingDetail((value) => !value)}
               />
+              {createAction}
               <Action.CopyToClipboard title="Copy Prompt" content={task.prompt} />
               <Action
                 title="Refresh"

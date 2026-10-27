@@ -7,7 +7,9 @@ Chat with Langdock models and agents, work with selected text and files, generat
 **Chat**
 
 - **Ask Langdock** – ask a question and get a streamed answer. Ask follow-ups (⌘F), switch the model (⌘M), copy or paste the answer.
-- **Ask Agent** – search your Langdock agents by name and chat with them. Recently used agents appear first.
+- **Ask Agent** – search your Langdock agents by name and chat with them. Agents with an input form open the form. Recently used agents appear first.
+- **Ask About Web Page** – summarize or ask about the page open in your browser (needs the [Raycast browser extension](https://www.raycast.com/browser-extension)).
+- **Ask About Screenshot** – capture part of the screen and ask about it.
 - **Ask About Files** – ask about files, such as the ones selected in Finder.
 - **Chat History** – search and continue earlier conversations.
 
@@ -19,6 +21,7 @@ Chat with Langdock models and agents, work with selected text and files, generat
 
 - **Search Prompts** – paste, copy or run prompts from your prompt library.
 - **Search Knowledge** – semantic search across knowledge bases shared with your key.
+- **Add to Knowledge Base** – upload files, such as the ones selected in Finder, to a knowledge base.
 - **Search Skills** – use a skill's instructions in a chat.
 - **Search Meetings** – read notes and transcripts of Langdock meetings, and summarize them.
 
@@ -29,8 +32,9 @@ Chat with Langdock models and agents, work with selected text and files, generat
 
 **Workspace**
 
-- **Manage Scheduled Tasks** – run, pause and resume scheduled tasks.
+- **Manage Scheduled Tasks** / **Create Scheduled Task** – create, run, pause and resume scheduled tasks.
 - **Browse Workflows** – see workflows and the steps of recent runs.
+- **Run Integration Action** – run an action of a custom, MCP or A2A integration with your connection.
 - **Open Langdock** – open the desktop app, or the web app if it's not installed.
 - **Langdock Settings** – API key, default chat and image models, and which Langdock APIs your key can use.
 
@@ -38,7 +42,7 @@ Chat with Langdock models and agents, work with selected text and files, generat
 
 1. In Langdock, create an API key under **Settings → Account → API keys** ([guide](https://docs.langdock.com/en/using-langdock/account/personal-api-keys)), or ask an admin for a workspace key.
 2. Paste it into the extension preferences, or open **Langdock Settings** and choose **Add API Key**.
-3. Open **Langdock Settings** to see which features your key can use. Personal keys start with model access only; your admin can allow more scopes, such as the Agent, Prompt, Knowledge, Skill, Workflow and Meetings APIs. Scheduled Tasks need a workspace key.
+3. Open **Langdock Settings** to see which features your key can use. Personal keys start with model access only; your admin can allow more scopes, such as the Agent, Prompt, Knowledge, Skill, Integration, Workflow and Meetings APIs. Scheduled Tasks need a workspace key.
 
 **Dedicated deployments:** set **API Base URL** to `https://<your-domain>/api/public`.
 
