@@ -56,7 +56,8 @@
       "title": "Summarize Selection",
       "subtitle": "Langdock",
       "description": "Summarize the selected text, or the clipboard if nothing is selected.",
-      "mode": "view"
+      "mode": "view",
+      "disabledByDefault": true
     },
     {
       "name": "translate-selection",
@@ -133,35 +134,40 @@
       "title": "Ask About Files",
       "subtitle": "Langdock",
       "description": "Ask questions about files, such as the files selected in Finder.",
-      "mode": "view"
+      "mode": "view",
+      "disabledByDefault": true
     },
     {
       "name": "chat-history",
       "title": "Chat History",
       "subtitle": "Langdock",
       "description": "Search and continue your earlier Langdock conversations.",
-      "mode": "view"
+      "mode": "view",
+      "disabledByDefault": true
     },
     {
       "name": "search-prompts",
       "title": "Search Prompts",
       "subtitle": "Langdock",
       "description": "Search your Langdock prompt library and paste or run a prompt.",
-      "mode": "view"
+      "mode": "view",
+      "disabledByDefault": true
     },
     {
       "name": "search-knowledge",
       "title": "Search Knowledge",
       "subtitle": "Langdock",
       "description": "Search the knowledge bases shared with your API key.",
-      "mode": "view"
+      "mode": "view",
+      "disabledByDefault": true
     },
     {
       "name": "add-to-knowledge-base",
       "title": "Add to Knowledge Base",
       "subtitle": "Langdock",
       "description": "Upload files, such as the files selected in Finder, to a Langdock knowledge base.",
-      "mode": "view"
+      "mode": "view",
+      "disabledByDefault": true
     },
     {
       "name": "search-skills",
@@ -176,7 +182,8 @@
       "title": "Search Meetings",
       "subtitle": "Langdock",
       "description": "Search your Langdock meetings and read notes and transcripts.",
-      "mode": "view"
+      "mode": "view",
+      "disabledByDefault": true
     },
     {
       "name": "generate-image",
@@ -278,7 +285,8 @@
       "title": "Manage Scheduled Tasks",
       "subtitle": "Langdock",
       "description": "Run, pause and resume your Langdock scheduled tasks.",
-      "mode": "view"
+      "mode": "view",
+      "disabledByDefault": true
     },
     {
       "name": "create-scheduled-task",
@@ -293,7 +301,8 @@
       "title": "Browse Workflows",
       "subtitle": "Langdock",
       "description": "Browse your Langdock workflows and their recent runs.",
-      "mode": "view"
+      "mode": "view",
+      "disabledByDefault": true
     },
     {
       "name": "run-integration-action",
@@ -308,7 +317,8 @@
       "title": "Open Langdock",
       "subtitle": "Langdock",
       "description": "Open the Langdock desktop app, or the web app if it is not installed.",
-      "mode": "no-view"
+      "mode": "no-view",
+      "disabledByDefault": true
     }
   ],
   "preferences": [

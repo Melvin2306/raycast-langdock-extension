@@ -3,6 +3,8 @@ import { usePromise } from "@raycast/utils";
 import { Chat } from "./components/Chat";
 import { clearConversations, deleteConversation, getConversations, transcript } from "./lib/history";
 import { sanitizeMarkdown } from "./lib/markdown";
+import { displayName } from "./lib/models";
+import { AUTO_MODEL } from "./lib/langdock";
 
 export default function Command() {
   return <ChatHistory />;
@@ -48,7 +50,7 @@ function ChatHistory() {
                 <List.Item.Detail.Metadata>
                   <List.Item.Detail.Metadata.Label
                     title={conversation.agent ? "Agent" : "Model"}
-                    text={conversation.agent?.name ?? conversation.model ?? "Auto"}
+                    text={conversation.agent?.name ?? modelName(conversation.model)}
                   />
                   <List.Item.Detail.Metadata.Label title="Messages" text={String(conversation.turns.length * 2)} />
                   <List.Item.Detail.Metadata.Label
@@ -92,4 +94,8 @@ function ChatHistory() {
       ))}
     </List>
   );
+}
+
+function modelName(model: string | undefined): string {
+  return !model || model === AUTO_MODEL ? "Auto" : displayName(model);
 }

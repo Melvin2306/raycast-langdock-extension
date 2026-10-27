@@ -50,7 +50,7 @@ Chat with Langdock models and agents, work with selected text and files, generat
 - **Fallback search:** add **Ask Langdock** to Raycast's fallback commands (Raycast Settings → Extensions → Langdock → Ask Langdock → Use as Fallback). Then type a question into Raycast's root search and pick Ask Langdock to send it right away.
 - **Quicklinks:** in **Ask Agent** or **Search Prompts**, use **Create Quicklink** (⌘⇧L) to give a favorite agent or prompt its own entry, alias and hotkey in Raycast.
 - **Default models:** pick a model in a chat or in Generate Image and use **Set as Default Model** (⌘⇧D).
-- **More commands:** Explain Selection, Search Skills, Browse Generated Images, Create Scheduled Task and Run Integration Action are off by default. Turn them on in Raycast Settings → Extensions → Langdock.
+- **More commands:** to keep Raycast's search tidy, only the core commands are on after installing: Ask Langdock, Ask Agent, Ask About Selection, Improve Writing, Translate Selection, Ask About Web Page, Ask About Screenshot and Generate Image. Turn on the others in Raycast Settings → Extensions → Langdock.
 
 ## Notes
 
