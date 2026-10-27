@@ -1,0 +1,619 @@
+[
+  {
+    "id": "claude-fable-5",
+    "provider": "anthropic",
+    "type": "chat",
+    "displayName": "Fable 5",
+    "description": "Earlier Fable model for complex reasoning, agentic coding, professional software engineering, and long-running agents.",
+    "contextWindowSize": 300000,
+    "maxOutputTokens": 128000,
+    "vision": true,
+    "thinking": true
+  },
+  {
+    "id": "claude-fable-5-1",
+    "provider": "anthropic",
+    "type": "chat",
+    "displayName": "Fable 5.1",
+    "description": "Anthropic's latest Fable model for complex reasoning, agentic coding, professional software engineering, and long-running agents.",
+    "contextWindowSize": 300000,
+    "maxOutputTokens": 128000,
+    "vision": true,
+    "thinking": true
+  },
+  {
+    "id": "claude-haiku-4-5",
+    "provider": "anthropic",
+    "type": "chat",
+    "displayName": "Haiku 4.5",
+    "description": "Fast, lightweight Anthropic model with near-frontier intelligence for quick answers, simple coding tasks, and high-volume workflows.",
+    "contextWindowSize": 200000,
+    "maxOutputTokens": 64000,
+    "vision": true
+  },
+  {
+    "id": "claude-opus-4-5",
+    "provider": "anthropic",
+    "type": "chat",
+    "displayName": "Opus 4.5",
+    "description": "Earlier Opus model for complex reasoning, agentic coding, professional software engineering, and long-running agents.",
+    "contextWindowSize": 200000,
+    "maxOutputTokens": 64000,
+    "vision": true,
+    "thinking": true
+  },
+  {
+    "id": "claude-opus-4-6",
+    "provider": "anthropic",
+    "type": "chat",
+    "displayName": "Opus 4.6",
+    "description": "Earlier Opus model for complex reasoning, agentic coding, professional software engineering, and long-running agents.",
+    "contextWindowSize": 300000,
+    "maxOutputTokens": 128000,
+    "vision": true,
+    "thinking": true
+  },
+  {
+    "id": "claude-opus-4-7",
+    "provider": "anthropic",
+    "type": "chat",
+    "displayName": "Opus 4.7",
+    "description": "Earlier Opus model for complex reasoning, agentic coding, professional software engineering, and long-running agents.",
+    "contextWindowSize": 300000,
+    "maxOutputTokens": 128000,
+    "vision": true,
+    "thinking": true
+  },
+  {
+    "id": "claude-opus-4-8",
+    "provider": "anthropic",
+    "type": "chat",
+    "displayName": "Opus 4.8",
+    "description": "Earlier Opus model for complex reasoning, agentic coding, professional software engineering, and long-running agents.",
+    "contextWindowSize": 300000,
+    "maxOutputTokens": 128000,
+    "vision": true,
+    "thinking": true
+  },
+  {
+    "id": "claude-opus-5",
+    "provider": "anthropic",
+    "type": "chat",
+    "displayName": "Opus 5",
+    "description": "Earlier Opus model for complex reasoning, agentic coding, professional software engineering, and long-running agents.",
+    "contextWindowSize": 300000,
+    "maxOutputTokens": 128000,
+    "vision": true,
+    "thinking": true
+  },
+  {
+    "id": "claude-opus-5-5",
+    "provider": "anthropic",
+    "type": "chat",
+    "displayName": "Opus 5.5",
+    "description": "Anthropic's latest Opus model for complex reasoning, agentic coding, professional software engineering, and long-running agents.",
+    "contextWindowSize": 300000,
+    "maxOutputTokens": 128000,
+    "vision": true,
+    "thinking": true
+  },
+  {
+    "id": "claude-sonnet-4-5",
+    "provider": "anthropic",
+    "type": "chat",
+    "displayName": "Sonnet 4.5",
+    "description": "Earlier Sonnet model balancing speed and intelligence for coding, writing, analysis, and detailed instruction following.",
+    "contextWindowSize": 200000,
+    "maxOutputTokens": 64000,
+    "vision": true,
+    "thinking": true
+  },
+  {
+    "id": "claude-sonnet-4-6",
+    "provider": "anthropic",
+    "type": "chat",
+    "displayName": "Sonnet 4.6",
+    "description": "Earlier Sonnet model balancing speed and intelligence for coding, agents, writing, and analysis.",
+    "contextWindowSize": 300000,
+    "maxOutputTokens": 128000,
+    "vision": true,
+    "thinking": true
+  },
+  {
+    "id": "claude-sonnet-5",
+    "provider": "anthropic",
+    "type": "chat",
+    "displayName": "Sonnet 5",
+    "description": "Earlier Sonnet model balancing speed and intelligence for coding, agents, writing, and analysis.",
+    "contextWindowSize": 300000,
+    "maxOutputTokens": 128000,
+    "vision": true,
+    "thinking": true
+  },
+  {
+    "id": "claude-sonnet-5-5",
+    "provider": "anthropic",
+    "type": "chat",
+    "displayName": "Sonnet 5.5",
+    "description": "Anthropic's latest Sonnet model balancing speed and intelligence for coding, agents, writing, and analysis.",
+    "contextWindowSize": 300000,
+    "maxOutputTokens": 128000,
+    "vision": true,
+    "thinking": true
+  },
+  {
+    "id": "flux-2-pro",
+    "provider": "blackforestlabs",
+    "type": "image",
+    "displayName": "FLUX2 [pro]",
+    "description": "Image model for photorealistic, high-resolution generation with strong prompt control, text rendering, and polished visual detail.",
+    "imageEditing": true
+  },
+  {
+    "id": "DeepSeek-V4-Pro",
+    "provider": "deepseek",
+    "type": "chat",
+    "displayName": "DeepSeek v4 Pro",
+    "description": "Open-source reasoning model for coding, analysis, math, and agentic tasks with a 1M-token context window.",
+    "contextWindowSize": 1000000,
+    "maxOutputTokens": 128000
+  },
+  {
+    "id": "DeepSeek-V4-Flash",
+    "provider": "deepseek",
+    "type": "chat",
+    "displayName": "DeepSeek v4 Flash",
+    "description": "Faster DeepSeek v4 model for coding, analysis, and everyday problem-solving with a 1M-token context window.",
+    "contextWindowSize": 1000000,
+    "maxOutputTokens": 128000
+  },
+  {
+    "id": "DeepSeek-V3.2",
+    "provider": "deepseek",
+    "type": "chat",
+    "displayName": "DeepSeek v3.2",
+    "description": "Open-source model for coding, analysis, math, and agentic tasks with improved reasoning and efficiency over v3.1.",
+    "contextWindowSize": 128000,
+    "maxOutputTokens": 128000
+  },
+  {
+    "id": "DeepSeek-V3.1",
+    "provider": "deepseek",
+    "type": "chat",
+    "displayName": "DeepSeek v3.1",
+    "description": "Open-source model for coding, analysis, math, and everyday problem-solving with strong value for technical tasks.",
+    "contextWindowSize": 128000,
+    "maxOutputTokens": 16000,
+    "deprecated": true
+  },
+  {
+    "id": "DeepSeek-R1",
+    "provider": "deepseek",
+    "type": "chat",
+    "displayName": "DeepSeek r1",
+    "description": "Open-source reasoning model for math, coding, analysis, and step-by-step problem-solving.",
+    "contextWindowSize": 128000,
+    "maxOutputTokens": 8000,
+    "deprecated": true
+  },
+  {
+    "id": "gemini-2.5-flash",
+    "provider": "google",
+    "type": "chat",
+    "displayName": "Gemini 2.5 Flash",
+    "description": "Fast Gemini model for everyday tasks, high-volume workflows, multimodal prompts, and lower-latency responses.",
+    "contextWindowSize": 200000,
+    "maxOutputTokens": 65536,
+    "vision": true
+  },
+  {
+    "id": "gemini-2.5-flash-image",
+    "provider": "google",
+    "type": "image",
+    "displayName": "🍌 Gemini 2.5 Flash Image",
+    "description": "Image model for conversational editing, multi-image fusion, consistent subjects, and natural-language image changes.",
+    "contextWindowSize": 200000,
+    "vision": true,
+    "imageEditing": true
+  },
+  {
+    "id": "gemini-2.5-pro",
+    "provider": "google",
+    "type": "chat",
+    "displayName": "Gemini 2.5 Pro",
+    "description": "Google Pro model for complex reasoning, coding, math, and analysis across long context and large datasets.",
+    "contextWindowSize": 200000,
+    "maxOutputTokens": 65536,
+    "vision": true,
+    "thinking": true
+  },
+  {
+    "id": "gemini-3.1-flash-image",
+    "provider": "google",
+    "type": "image",
+    "displayName": "🍌 Gemini 3.1 Flash Image",
+    "description": "Latest Gemini image model for conversational editing, multi-image fusion, consistent subjects, and natural-language image changes.",
+    "contextWindowSize": 200000,
+    "vision": true,
+    "imageEditing": true
+  },
+  {
+    "id": "gemini-3.1-pro-preview",
+    "provider": "google",
+    "type": "chat",
+    "displayName": "Gemini 3.1 Pro Preview",
+    "description": "Latest Gemini Pro preview model for complex reasoning, coding, math, and long-context analysis across large inputs.",
+    "contextWindowSize": 200000,
+    "maxOutputTokens": 65536,
+    "vision": true
+  },
+  {
+    "id": "gemini-3.8-flash",
+    "provider": "google",
+    "type": "chat",
+    "displayName": "Gemini 3.8 Flash",
+    "description": "Latest Gemini Flash model for fast agentic coding workflows, multimodal tasks, and strong reasoning at lower latency and cost.",
+    "contextWindowSize": 200000,
+    "maxOutputTokens": 65536,
+    "vision": true,
+    "thinking": true
+  },
+  {
+    "id": "gemini-3.7-flash",
+    "provider": "google",
+    "type": "chat",
+    "displayName": "Gemini 3.7 Flash",
+    "description": "Earlier Gemini Flash model for fast agentic coding workflows, multimodal tasks, and strong reasoning at lower latency and cost.",
+    "contextWindowSize": 200000,
+    "maxOutputTokens": 65536,
+    "vision": true,
+    "thinking": true
+  },
+  {
+    "id": "gemini-3.6-flash",
+    "provider": "google",
+    "type": "chat",
+    "displayName": "Gemini 3.6 Flash",
+    "description": "Gemini Flash model for fast agentic coding workflows, multimodal tasks, and strong reasoning at lower latency and cost.",
+    "contextWindowSize": 200000,
+    "maxOutputTokens": 65536,
+    "vision": true,
+    "thinking": true
+  },
+  {
+    "id": "gemini-3.5-flash-lite",
+    "provider": "google",
+    "type": "chat",
+    "displayName": "Gemini 3.5 Flash-Lite",
+    "description": "Cost-effective Gemini Flash-Lite model for simple coding tasks, precise document understanding, lightweight agentic workflows, and fast inference.",
+    "contextWindowSize": 200000,
+    "maxOutputTokens": 65536,
+    "vision": true,
+    "thinking": true
+  },
+  {
+    "id": "gemini-3.5-flash",
+    "provider": "google",
+    "type": "chat",
+    "displayName": "Gemini 3.5 Flash",
+    "description": "Gemini Flash model for agentic tasks, complex coding workflows, and multimodal understanding at exceptional speed.",
+    "contextWindowSize": 200000,
+    "maxOutputTokens": 65536,
+    "vision": true,
+    "thinking": true
+  },
+  {
+    "id": "gemini-3-flash-preview",
+    "provider": "google",
+    "type": "chat",
+    "displayName": "Gemini 3 Flash Preview",
+    "description": "Earlier Gemini Flash preview model for fast, lower-cost reasoning, coding, and everyday multimodal tasks.",
+    "contextWindowSize": 200000,
+    "maxOutputTokens": 65536,
+    "vision": true
+  },
+  {
+    "id": "imagen-4.0-generate-001",
+    "provider": "google",
+    "type": "image",
+    "displayName": "Imagen 4",
+    "description": "Image model for high-quality, detailed generations with strong text rendering, creative fidelity, and polished visual results.",
+    "vision": true,
+    "deprecated": true
+  },
+  {
+    "id": "Llama-3.3-70B-Instruct",
+    "provider": "meta",
+    "type": "chat",
+    "displayName": "Llama 3.3 70B",
+    "description": "Open-source Meta model for text tasks, everyday writing, summarization, and basic problem-solving.",
+    "contextWindowSize": 128000,
+    "maxOutputTokens": 16000
+  },
+  {
+    "id": "Llama-4-Maverick-17B-128E-Instruct-FP8",
+    "provider": "meta",
+    "type": "chat",
+    "displayName": "Llama 4 Maverick",
+    "description": "Open-source Meta model for multimodal coding, writing, visual understanding, and everyday problem-solving.",
+    "contextWindowSize": 200000,
+    "maxOutputTokens": 16000,
+    "vision": true
+  },
+  {
+    "id": "mistral-large-2512",
+    "provider": "mistral",
+    "type": "chat",
+    "displayName": "Mistral Large 3",
+    "description": "Open-weight model for long-context reasoning, reliable instruction following, multilingual work, and multimodal tasks.",
+    "contextWindowSize": 200000,
+    "maxOutputTokens": 16000,
+    "vision": true
+  },
+  {
+    "id": "gpt-5",
+    "provider": "openai",
+    "type": "chat",
+    "displayName": "GPT-5",
+    "description": "Earlier OpenAI GPT model for coding, reasoning, agentic tasks, and general problem-solving across domains.",
+    "contextWindowSize": 270000,
+    "maxOutputTokens": 128000,
+    "vision": true,
+    "thinking": true
+  },
+  {
+    "id": "gpt-5",
+    "provider": "openai",
+    "type": "chat",
+    "displayName": "GPT-5",
+    "description": "Earlier OpenAI GPT model for coding, reasoning, agentic tasks, and general problem-solving across domains.",
+    "contextWindowSize": 270000,
+    "maxOutputTokens": 128000,
+    "vision": true,
+    "thinking": true,
+    "deprecated": true
+  },
+  {
+    "id": "gpt-5.1",
+    "provider": "openai",
+    "type": "chat",
+    "displayName": "GPT-5.1 Thinking Fast",
+    "description": "Fast GPT-5.1 reasoning variant for coding, analysis, and agentic tasks with lower reasoning effort.",
+    "contextWindowSize": 270000,
+    "maxOutputTokens": 128000,
+    "vision": true,
+    "deprecated": true
+  },
+  {
+    "id": "gpt-5.1",
+    "provider": "openai",
+    "type": "chat",
+    "displayName": "GPT-5.1",
+    "description": "Earlier OpenAI GPT model for coding, agentic tasks, analysis, and professional work with configurable reasoning effort.",
+    "contextWindowSize": 270000,
+    "maxOutputTokens": 128000,
+    "vision": true,
+    "thinking": true
+  },
+  {
+    "id": "gpt-5.2",
+    "provider": "openai",
+    "type": "chat",
+    "displayName": "GPT-5.2",
+    "description": "Earlier OpenAI frontier model for complex professional work, coding, and analysis, with configurable reasoning effort.",
+    "contextWindowSize": 270000,
+    "maxOutputTokens": 128000,
+    "vision": true,
+    "thinking": true
+  },
+  {
+    "id": "gpt-5.2-pro",
+    "provider": "openai",
+    "type": "chat",
+    "displayName": "GPT-5.2 Pro",
+    "description": "Higher-compute GPT-5.2 model for tough professional work, deeper reasoning, and long-running workflows where precision matters more than speed.",
+    "contextWindowSize": 270000,
+    "maxOutputTokens": 16384,
+    "vision": true
+  },
+  {
+    "id": "gpt-5.4",
+    "provider": "openai",
+    "type": "chat",
+    "displayName": "GPT-5.4",
+    "description": "Earlier, more affordable OpenAI frontier model for complex professional work, coding, and analysis, with configurable reasoning effort.",
+    "contextWindowSize": 270000,
+    "maxOutputTokens": 128000,
+    "vision": true,
+    "thinking": true
+  },
+  {
+    "id": "gpt-5.4-mini",
+    "provider": "openai",
+    "type": "chat",
+    "displayName": "GPT-5.4 Mini",
+    "description": "Faster, lower-cost GPT-5.4 model for high-volume coding, computer use, subagents, and efficient workflows.",
+    "contextWindowSize": 270000,
+    "maxOutputTokens": 128000,
+    "vision": true
+  },
+  {
+    "id": "gpt-5.5",
+    "provider": "openai",
+    "type": "chat",
+    "displayName": "GPT-5.5",
+    "description": "Earlier OpenAI flagship model for complex professional work, coding, and analysis, with configurable reasoning effort.",
+    "contextWindowSize": 270000,
+    "maxOutputTokens": 128000,
+    "vision": true,
+    "thinking": true
+  },
+  {
+    "id": "gpt-5.6-sol",
+    "provider": "openai",
+    "type": "chat",
+    "displayName": "GPT-5.6 Sol",
+    "description": "OpenAI's flagship GPT-5.6 model for complex professional work, coding, and analysis, with configurable reasoning effort.",
+    "contextWindowSize": 270000,
+    "maxOutputTokens": 128000,
+    "vision": true,
+    "thinking": true
+  },
+  {
+    "id": "gpt-5.6-terra",
+    "provider": "openai",
+    "type": "chat",
+    "displayName": "GPT-5.6 Terra",
+    "description": "Balanced GPT-5.6 model for everyday professional work, coding, and analysis at lower cost.",
+    "contextWindowSize": 270000,
+    "maxOutputTokens": 128000,
+    "vision": true,
+    "thinking": true
+  },
+  {
+    "id": "gpt-5.6-luna",
+    "provider": "openai",
+    "type": "chat",
+    "displayName": "GPT-5.6 Luna",
+    "description": "Fast, cost-efficient GPT-5.6 model for high-volume workflows, routine coding, and everyday tasks.",
+    "contextWindowSize": 270000,
+    "maxOutputTokens": 128000,
+    "vision": true,
+    "thinking": true
+  },
+  {
+    "id": "gpt-6-sol",
+    "provider": "openai",
+    "type": "chat",
+    "displayName": "GPT-6 Sol",
+    "description": "OpenAI GPT-6 model for complex coding and agentic workflows, with configurable reasoning effort.",
+    "contextWindowSize": 270000,
+    "maxOutputTokens": 128000,
+    "vision": true,
+    "thinking": true
+  },
+  {
+    "id": "gpt-6.1-sol",
+    "provider": "openai",
+    "type": "chat",
+    "displayName": "GPT-6.1 Sol",
+    "description": "OpenAI GPT-6.1 Sol model for complex coding and agentic workflows, with configurable reasoning effort.",
+    "contextWindowSize": 270000,
+    "maxOutputTokens": 128000,
+    "vision": true,
+    "thinking": true
+  },
+  {
+    "id": "gpt-6-luna",
+    "provider": "openai",
+    "type": "chat",
+    "displayName": "GPT-6 Luna",
+    "description": "Efficient OpenAI GPT-6 model for focused, high-volume tasks, with configurable reasoning effort.",
+    "contextWindowSize": 270000,
+    "maxOutputTokens": 128000,
+    "vision": true,
+    "thinking": true
+  },
+  {
+    "id": "gpt-6-astra",
+    "provider": "openai",
+    "type": "chat",
+    "displayName": "GPT-6 Astra",
+    "description": "OpenAI's most capable model for complex reasoning, coding, research, document creation, and computer use.",
+    "contextWindowSize": 270000,
+    "maxOutputTokens": 128000,
+    "vision": true,
+    "thinking": true
+  },
+  {
+    "id": "gpt-5-mini",
+    "provider": "openai",
+    "type": "chat",
+    "displayName": "GPT-5 Mini",
+    "description": "Earlier, smaller and faster GPT-5 model for well-defined tasks, quick edits, routine writing, and lower-cost workflows.",
+    "contextWindowSize": 270000,
+    "maxOutputTokens": 32000,
+    "vision": true
+  },
+  {
+    "id": "gpt-5-pro",
+    "provider": "openai",
+    "type": "chat",
+    "displayName": "GPT-5 Pro",
+    "description": "Higher-compute GPT-5 model for tough problems, deeper reasoning, and long-running workflows where precision matters more than speed.",
+    "contextWindowSize": 270000,
+    "maxOutputTokens": 16384,
+    "vision": true
+  },
+  {
+    "id": "gpt-image-1.5",
+    "provider": "openai",
+    "type": "image",
+    "displayName": "GPT Image 1.5",
+    "description": "Earlier OpenAI image model for high-quality generation and editing, with strong instruction following, text rendering, and real-world knowledge.",
+    "imageEditing": true
+  },
+  {
+    "id": "gpt-image-2",
+    "provider": "openai",
+    "type": "image",
+    "displayName": "GPT Image 2",
+    "description": "OpenAI GPT Image 2 for high-quality generation and editing, with strong instruction following, text rendering, and real-world knowledge.",
+    "imageEditing": true
+  },
+  {
+    "id": "gpt-image-2.5-sunburst",
+    "provider": "openai",
+    "type": "image",
+    "displayName": "GPT Image 2.5 Sunburst",
+    "description": "OpenAI's most capable image model for high-quality generation and editing, with stronger instruction following, text rendering, and consistent details across edits.",
+    "imageEditing": true
+  },
+  {
+    "id": "gpt-image-2.5-flare",
+    "provider": "openai",
+    "type": "image",
+    "displayName": "GPT Image 2.5 Flare",
+    "description": "OpenAI's fastest GPT Image 2.5 model for high-quality everyday image generation and editing.",
+    "imageEditing": true
+  },
+  {
+    "id": "gpt-oss-120b",
+    "provider": "openai",
+    "type": "chat",
+    "displayName": "GPT oss (120b)",
+    "description": "Open-weight OpenAI model for coding, math, and reasoning tasks where transparency and self-hosting flexibility matter.",
+    "contextWindowSize": 128000,
+    "maxOutputTokens": 16384
+  },
+  {
+    "id": "o3",
+    "provider": "openai",
+    "type": "chat",
+    "displayName": "o3",
+    "description": "OpenAI reasoning model for multi-step coding, math, science, technical writing, and visual analysis tasks.",
+    "contextWindowSize": 200000,
+    "maxOutputTokens": 32000,
+    "vision": true
+  },
+  {
+    "id": "o3-pro",
+    "provider": "openai",
+    "type": "chat",
+    "displayName": "o3 Pro",
+    "description": "Higher-compute o3 reasoning model for tough coding, math, science, and analysis tasks where depth matters more than speed.",
+    "contextWindowSize": 200000,
+    "maxOutputTokens": 32000,
+    "vision": true
+  },
+  {
+    "id": "o4-mini",
+    "provider": "openai",
+    "type": "chat",
+    "displayName": "o4 Mini",
+    "description": "Fast, cost-efficient reasoning model for coding, math, visual tasks, and structured analysis.",
+    "contextWindowSize": 200000,
+    "maxOutputTokens": 32000,
+    "vision": true
+  }
+]

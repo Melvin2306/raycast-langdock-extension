@@ -1,0 +1,231 @@
+import { Action, ActionPanel, Color, Form, Icon, Keyboard, List, showToast, Toast, useNavigation } from "@raycast/api";
+import { showFailureToast, useCachedPromise, useLocalStorage } from "@raycast/utils";
+import { ApiKeyMissing } from "./components/ApiKeyMissing";
+import { AskForm, Chat } from "./components/Chat";
+import { AgentListItem, apiKey, getAgent, LangdockError, listAgents, webAppUrl } from "./lib/langdock";
+import { displayName } from "./lib/models";
+import { RECENT_AGENTS_KEY, SAVED_AGENTS_KEY } from "./lib/settings";
+
+/** Agents added by ID, for deployments without the agent list endpoint or agents it doesn't return. */
+interface SavedAgent {
+  id: string;
+  name: string;
+  description: string | null;
+  emojiIcon: string | null;
+  model: string | null;
+  conversationStarters?: string[];
+}
+
+interface AgentRow {
+  id: string;
+  name: string;
+  description: string | null;
+  emojiIcon: string | null;
+  model: string | null;
+  owner?: string | null;
+  inputType?: AgentListItem["inputType"];
+  conversationStarters?: string[];
+  addedManually: boolean;
+}
+
+const MAX_RECENT = 6;
+const UUID_PATTERN = /[0-9a-f]{8}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{12}/i;
+
+export default function Command() {
+  return apiKey() ? <Agents /> : <ApiKeyMissing />;
+}
+
+function Agents() {
+  const { push } = useNavigation();
+  const {
+    data: listed,
+    isLoading: isLoadingList,
+    error: listError,
+    revalidate,
+  } = useCachedPromise(listAgents, [], {
+    onError: (error) => {
+      // 404: deployment without the list endpoint; saved agents still work.
+      if (!(error instanceof LangdockError && error.status === 404)) {
+        showFailureToast(error, { title: "Could not load agents" });
+      }
+    },
+  });
+  const {
+    value: saved = [],
+    setValue: setSaved,
+    isLoading: isLoadingSaved,
+  } = useLocalStorage<SavedAgent[]>(SAVED_AGENTS_KEY, []);
+  const {
+    value: recent = {},
+    setValue: setRecent,
+    isLoading: isLoadingRecent,
+  } = useLocalStorage<Record<string, string>>(RECENT_AGENTS_KEY, {});
+
+  const rows = new Map<string, AgentRow>();
+  for (const agent of listed ?? []) {
+    if (agent.disabled) continue;
+    rows.set(agent.id, {
+      id: agent.id,
+      name: agent.name || "Untitled Agent",
+      description: agent.description,
+      emojiIcon: agent.emojiIcon,
+      model: agent.model,
+      owner: agent.owner?.name ?? agent.owner?.email,
+      inputType: agent.inputType,
+      addedManually: false,
+    });
+  }
+  for (const agent of saved) {
+    const existing = rows.get(agent.id);
+    rows.set(
+      agent.id,
+      existing ? { ...existing, conversationStarters: agent.conversationStarters } : { ...agent, addedManually: true },
+    );
+  }
+
+  const recentRows = Object.entries(recent)
+    .sort(([, a], [, b]) => b.localeCompare(a))
+    .map(([id]) => rows.get(id))
+    .filter((row): row is AgentRow => Boolean(row))
+    .slice(0, MAX_RECENT);
+  const recentIds = new Set(recentRows.map((row) => row.id));
+  const otherRows = [...rows.values()]
+    .filter((row) => !recentIds.has(row.id))
+    .sort((a, b) => a.name.localeCompare(b.name));
+
+  async function ask(agent: AgentRow) {
+    await setRecent({ ...recent, [agent.id]: new Date().toISOString() });
+    push(
+      <AskForm
+        title={agent.name}
+        defaultValue={agent.conversationStarters?.[0]}
+        onSubmit={(question) => push(<Chat initialPrompt={question} agent={agent} />)}
+      />,
+    );
+  }
+
+  async function forget(agent: AgentRow) {
+    const rest = { ...recent };
+    delete rest[agent.id];
+    await setRecent(rest);
+    if (agent.addedManually) await setSaved(saved.filter((a) => a.id !== agent.id));
+  }
+
+  const addAction = (
+    <Action.Push
+      title="Add Agent by ID"
+      icon={Icon.Plus}
+      shortcut={Keyboard.Shortcut.Common.New}
+      target={<AddAgentForm onAdd={(agent) => setSaved([...saved.filter((a) => a.id !== agent.id), agent])} />}
+    />
+  );
+
+  const renderRow = (agent: AgentRow) => (
+    <List.Item
+      key={agent.id}
+      icon={agent.emojiIcon || Icon.Stars}
+      title={agent.name}
+      subtitle={agent.description ?? undefined}
+      keywords={[agent.description ?? "", agent.owner ?? ""]}
+      accessories={[
+        ...(agent.inputType && agent.inputType !== "PROMPT"
+          ? [{ tag: { value: "Form input", color: Color.Orange }, tooltip: "This agent expects structured input" }]
+          : []),
+        ...(agent.model ? [{ tag: agent.model === "auto" ? "Auto" : displayName(agent.model) }] : []),
+        ...(agent.owner ? [{ icon: Icon.Person, tooltip: `Owner: ${agent.owner}` }] : []),
+      ]}
+      actions={
+        <ActionPanel>
+          <Action title="Ask Agent" icon={Icon.Bubble} onAction={() => ask(agent)} />
+          <Action.OpenInBrowser
+            title="Open Agent in Langdock"
+            url={`${webAppUrl()}/agents/${agent.id}/edit`}
+            shortcut={Keyboard.Shortcut.Common.Open}
+          />
+          <Action.CopyToClipboard title="Copy Agent ID" content={agent.id} />
+          {addAction}
+          {(recentIds.has(agent.id) || agent.addedManually) && (
+            <Action
+              title={agent.addedManually ? "Remove Agent" : "Remove from Recent"}
+              icon={Icon.XMarkCircle}
+              shortcut={Keyboard.Shortcut.Common.Remove}
+              onAction={() => forget(agent)}
+            />
+          )}
+          <Action
+            title="Reload Agents"
+            icon={Icon.ArrowClockwise}
+            shortcut={Keyboard.Shortcut.Common.Refresh}
+            onAction={revalidate}
+          />
+        </ActionPanel>
+      }
+    />
+  );
+
+  const listUnavailable = listError instanceof LangdockError && listError.status === 404;
+
+  return (
+    <List isLoading={isLoadingList || isLoadingSaved || isLoadingRecent} searchBarPlaceholder="Search agents…">
+      <List.EmptyView
+        icon={Icon.Stars}
+        title="No Agents"
+        description={
+          listUnavailable
+            ? "This Langdock deployment can't list agents yet. Add one by ID or URL."
+            : "Agents shared with you, or with this API key, appear here. You can also add one by ID or URL."
+        }
+        actions={<ActionPanel>{addAction}</ActionPanel>}
+      />
+      <List.Section title="Recent">{recentRows.map(renderRow)}</List.Section>
+      <List.Section title="All Agents">{otherRows.map(renderRow)}</List.Section>
+    </List>
+  );
+}
+
+function AddAgentForm(props: { onAdd: (agent: SavedAgent) => Promise<void> }) {
+  const { pop } = useNavigation();
+
+  async function submit(values: { agent: string }) {
+    const agentId = UUID_PATTERN.exec(values.agent)?.[0];
+    if (!agentId) {
+      await showToast({ style: Toast.Style.Failure, title: "No agent ID found", message: "Paste an agent ID or URL" });
+      return;
+    }
+    const toast = await showToast({ style: Toast.Style.Animated, title: "Loading agent…" });
+    try {
+      const agent = await getAgent(agentId);
+      await props.onAdd({
+        id: agent.id,
+        name: agent.name,
+        description: agent.description,
+        emojiIcon: agent.emojiIcon,
+        model: agent.model,
+        conversationStarters: agent.conversationStarters ?? [],
+      });
+      toast.style = Toast.Style.Success;
+      toast.title = `Added ${agent.name}`;
+      pop();
+    } catch (error) {
+      await showFailureToast(error, { title: "Could not load agent" });
+    }
+  }
+
+  return (
+    <Form
+      navigationTitle="Add Agent by ID"
+      actions={
+        <ActionPanel>
+          <Action.SubmitForm title="Add Agent" icon={Icon.Plus} onSubmit={submit} />
+        </ActionPanel>
+      }
+    >
+      <Form.TextField
+        id="agent"
+        title="Agent ID or URL"
+        placeholder="https://app.langdock.com/agents/…/edit"
+        info="Open the agent in Langdock and copy the URL. The agent must be shared with you or your API key."
+      />
+    </Form>
+  );
+}

@@ -1,0 +1,233 @@
+{
+  "$schema": "https://www.raycast.com/schemas/extension.json",
+  "name": "langdock",
+  "title": "Langdock",
+  "description": "Chat with Langdock models and agents, work with selected text and files, generate images, and search prompts, knowledge, meetings, tasks and workflows.",
+  "icon": "extension-icon.png",
+  "author": "Melvin2306",
+  "license": "MIT",
+  "categories": [
+    "Productivity",
+    "Developer Tools"
+  ],
+  "platforms": [
+    "macOS"
+  ],
+  "commands": [
+    {
+      "name": "ask-langdock",
+      "title": "Ask Langdock",
+      "subtitle": "Langdock",
+      "description": "Ask a question and get a streamed answer from a Langdock model.",
+      "mode": "view",
+      "arguments": [
+        {
+          "name": "prompt",
+          "placeholder": "Question",
+          "type": "text",
+          "required": false
+        }
+      ]
+    },
+    {
+      "name": "ask-agent",
+      "title": "Ask Agent",
+      "subtitle": "Langdock",
+      "description": "Chat with one of your Langdock agents.",
+      "mode": "view"
+    },
+    {
+      "name": "ask-about-selection",
+      "title": "Ask About Selection",
+      "subtitle": "Langdock",
+      "description": "Ask a question about the selected text.",
+      "mode": "view",
+      "arguments": [
+        {
+          "name": "question",
+          "placeholder": "Question",
+          "type": "text",
+          "required": true
+        }
+      ]
+    },
+    {
+      "name": "summarize-selection",
+      "title": "Summarize Selection",
+      "subtitle": "Langdock",
+      "description": "Summarize the selected text, or the clipboard if nothing is selected.",
+      "mode": "view"
+    },
+    {
+      "name": "translate-selection",
+      "title": "Translate Selection",
+      "subtitle": "Langdock",
+      "description": "Translate the selected text, or the clipboard if nothing is selected.",
+      "mode": "view",
+      "arguments": [
+        {
+          "name": "language",
+          "placeholder": "Language",
+          "type": "text",
+          "required": false
+        }
+      ],
+      "preferences": [
+        {
+          "name": "defaultLanguage",
+          "title": "Default Language",
+          "description": "Language to translate into when none is given.",
+          "type": "textfield",
+          "required": false,
+          "default": "English"
+        }
+      ]
+    },
+    {
+      "name": "improve-writing",
+      "title": "Improve Writing",
+      "subtitle": "Langdock",
+      "description": "Fix spelling and grammar and improve the clarity of the selected text.",
+      "mode": "view"
+    },
+    {
+      "name": "explain-selection",
+      "title": "Explain Selection",
+      "subtitle": "Langdock",
+      "description": "Explain the selected text in simple terms.",
+      "mode": "view"
+    },
+    {
+      "name": "ask-about-files",
+      "title": "Ask About Files",
+      "subtitle": "Langdock",
+      "description": "Ask questions about files, such as the files selected in Finder.",
+      "mode": "view"
+    },
+    {
+      "name": "chat-history",
+      "title": "Chat History",
+      "subtitle": "Langdock",
+      "description": "Search and continue your earlier Langdock conversations.",
+      "mode": "view"
+    },
+    {
+      "name": "search-prompts",
+      "title": "Search Prompts",
+      "subtitle": "Langdock",
+      "description": "Search your Langdock prompt library and paste or run a prompt.",
+      "mode": "view"
+    },
+    {
+      "name": "search-knowledge",
+      "title": "Search Knowledge",
+      "subtitle": "Langdock",
+      "description": "Search the knowledge bases shared with your API key.",
+      "mode": "view"
+    },
+    {
+      "name": "search-skills",
+      "title": "Search Skills",
+      "subtitle": "Langdock",
+      "description": "Browse your Langdock skills and use them in a chat.",
+      "mode": "view"
+    },
+    {
+      "name": "search-meetings",
+      "title": "Search Meetings",
+      "subtitle": "Langdock",
+      "description": "Search your Langdock meetings and read notes and transcripts.",
+      "mode": "view"
+    },
+    {
+      "name": "generate-image",
+      "title": "Generate Image",
+      "subtitle": "Langdock",
+      "description": "Generate an image with an image model from your Langdock workspace.",
+      "mode": "view",
+      "arguments": [
+        {
+          "name": "prompt",
+          "placeholder": "Prompt",
+          "type": "text",
+          "required": false
+        }
+      ]
+    },
+    {
+      "name": "image-history",
+      "title": "Browse Generated Images",
+      "subtitle": "Langdock",
+      "description": "Browse, copy and reuse images you generated.",
+      "mode": "view"
+    },
+    {
+      "name": "scheduled-tasks",
+      "title": "Manage Scheduled Tasks",
+      "subtitle": "Langdock",
+      "description": "Run, pause and resume your Langdock scheduled tasks.",
+      "mode": "view"
+    },
+    {
+      "name": "workflows",
+      "title": "Browse Workflows",
+      "subtitle": "Langdock",
+      "description": "Browse your Langdock workflows and their recent runs.",
+      "mode": "view"
+    },
+    {
+      "name": "open-langdock",
+      "title": "Open Langdock",
+      "subtitle": "Langdock",
+      "description": "Open the Langdock desktop app, or the web app if it is not installed.",
+      "mode": "no-view"
+    },
+    {
+      "name": "settings",
+      "title": "Langdock Settings",
+      "subtitle": "Langdock",
+      "description": "Manage your API key, default models and image options, and check which Langdock APIs your key can use.",
+      "mode": "view"
+    }
+  ],
+  "preferences": [
+    {
+      "name": "apiKey",
+      "title": "API Key",
+      "description": "Personal or workspace API key from Langdock (Settings → Account → API keys). Langdock Settings shows which features the key can use.",
+      "type": "password",
+      "required": false
+    },
+    {
+      "name": "apiBaseUrl",
+      "title": "API Base URL",
+      "description": "Use https://<your-domain>/api/public for dedicated deployments.",
+      "type": "textfield",
+      "required": false,
+      "default": "https://api.langdock.com"
+    }
+  ],
+  "dependencies": {
+    "@raycast/api": "^2.9.0",
+    "@raycast/utils": "^2.3.3"
+  },
+  "devDependencies": {
+    "@raycast/eslint-config": "^2.2.0",
+    "@types/node": "22.19.17",
+    "@types/react": "19.0.10",
+    "eslint": "^9.39.0",
+    "prettier": "^3.9.0",
+    "typescript": "^5.9.3",
+    "esbuild": "^0.28.2"
+  },
+  "scripts": {
+    "build": "ray build",
+    "dev": "ray develop",
+    "fix-lint": "ray lint --fix",
+    "lint": "ray lint",
+    "prepublishOnly": "echo \"\\n\\nIt seems like you are trying to publish the Raycast extension to npm.\\n\\nIf you did intend to publish it to npm, remove the \\`prepublishOnly\\` script and rerun \\`npm publish\\` again.\\nIf you wanted to publish it to the Raycast Store instead, use \\`npm run publish\\` instead.\\n\\n\" && exit 1",
+    "publish": "npx @raycast/api@latest publish",
+    "smoke-test": "esbuild scripts/smoke-test.ts --bundle --platform=node --format=esm --log-level=warning --alias:@raycast/api=./scripts/raycast-stub.ts --outfile=node_modules/.cache/smoke-test.mjs && node node_modules/.cache/smoke-test.mjs",
+    "test": "node scripts/test.mjs"
+  }
+}
