@@ -1,20 +1,13 @@
 import { Action, ActionPanel, Color, Detail, Icon, Keyboard, List, showToast, Toast } from "@raycast/api";
-import { showFailureToast, useCachedPromise } from "@raycast/utils";
+import { useCachedPromise } from "@raycast/utils";
 import { useState } from "react";
-import { ApiKeyMissing } from "./components/ApiKeyMissing";
 import { Chat } from "./components/Chat";
-import {
-  apiKey,
-  getMeetingNotes,
-  getMeetingTranscript,
-  listMeetings,
-  Meeting,
-  TranscriptSegment,
-} from "./lib/langdock";
+import { getMeetingNotes, getMeetingTranscript, listMeetings, Meeting, TranscriptSegment } from "./lib/langdock";
 import { escapeMarkdown, safeHttpUrl, sanitizeMarkdown, wrapUntrusted } from "./lib/markdown";
+import { showLangdockError } from "./lib/errors";
 
 export default function Command() {
-  return apiKey() ? <SearchMeetings /> : <ApiKeyMissing />;
+  return <SearchMeetings />;
 }
 
 function SearchMeetings() {
@@ -22,7 +15,7 @@ function SearchMeetings() {
   const { data: meetings, isLoading } = useCachedPromise(listMeetings, [search.trim()], {
     keepPreviousData: true,
     onError: (error) => {
-      showFailureToast(error, { title: "Could not load meetings" });
+      showLangdockError(error, { title: "Could not load meetings" });
     },
   });
 
@@ -105,7 +98,7 @@ function MeetingNotes(props: { meeting: Meeting }) {
   const link = meetingLink(meeting);
   const { data: notes, isLoading } = useCachedPromise(getMeetingNotes, [meeting.id], {
     onError: (error) => {
-      showFailureToast(error, { title: "Could not load notes" });
+      showLangdockError(error, { title: "Could not load notes" });
     },
   });
   const empty = meeting.notesStatus === "READY" ? "_No notes._" : `_Notes are ${meeting.notesStatus.toLowerCase()}._`;
@@ -157,7 +150,7 @@ function MeetingTranscript(props: { meeting: Meeting }) {
   const link = meetingLink(meeting);
   const { data: segments, isLoading } = useCachedPromise(getMeetingTranscript, [meeting.id], {
     onError: (error) => {
-      showFailureToast(error, { title: "Could not load transcript" });
+      showLangdockError(error, { title: "Could not load transcript" });
     },
   });
   const text = segments ? formatTranscript(segments) : "";

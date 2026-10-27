@@ -6,7 +6,7 @@ Chat with Langdock models and agents, work with selected text and files, generat
 
 **Chat**
 
-- **Ask Langdock** – ask a question and get a streamed answer. Ask follow-ups (⌘F), switch the model (⌘M), copy or paste the answer.
+- **Ask Langdock** – chat with Langdock. Type questions and follow-ups in the search bar, pick the model in the dropdown, copy or paste answers.
 - **Ask Agent** – search your Langdock agents by name and chat with them. Agents with an input form open the form. Recently used agents appear first.
 - **Ask About Web Page** – summarize or ask about the page open in your browser (needs the [Raycast browser extension](https://www.raycast.com/browser-extension)).
 - **Ask About Screenshot** – capture part of the screen and ask about it.
@@ -36,15 +36,21 @@ Chat with Langdock models and agents, work with selected text and files, generat
 - **Browse Workflows** – see workflows and the steps of recent runs.
 - **Run Integration Action** – run an action of a custom, MCP or A2A integration with your connection.
 - **Open Langdock** – open the desktop app, or the web app if it's not installed.
-- **Langdock Settings** – API key, default chat and image models, and which Langdock APIs your key can use.
 
 ## Setup
 
 1. In Langdock, create an API key under **Settings → Account → API keys** ([guide](https://docs.langdock.com/en/using-langdock/account/personal-api-keys)), or ask an admin for a workspace key.
-2. Paste it into the extension preferences, or open **Langdock Settings** and choose **Add API Key**.
-3. Open **Langdock Settings** to see which features your key can use. Personal keys start with model access only; your admin can allow more scopes, such as the Agent, Prompt, Knowledge, Skill, Integration, Workflow and Meetings APIs. Scheduled Tasks need a workspace key.
+2. Paste it into the extension preferences. Raycast asks for it the first time you run a command.
+3. Personal keys start with model access only; your admin can allow more scopes, such as the Agent, Prompt, Knowledge, Skill, Integration, Workflow and Meetings APIs. Scheduled Tasks need a workspace key. [help.md](help.md) lists the scope each command needs, and error messages name a missing scope.
 
 **Dedicated deployments:** set **API Base URL** to `https://<your-domain>/api/public`.
+
+## Tips
+
+- **Fallback search:** add **Ask Langdock** to Raycast's fallback commands (Raycast Settings → Extensions → Langdock → Ask Langdock → Use as Fallback). Then type a question into Raycast's root search and pick Ask Langdock to send it right away.
+- **Quicklinks:** in **Ask Agent** or **Search Prompts**, use **Create Quicklink** (⌘⇧L) to give a favorite agent or prompt its own entry, alias and hotkey in Raycast.
+- **Default models:** pick a model in a chat or in Generate Image and use **Set as Default Model** (⌘⇧D).
+- **More commands:** Explain Selection, Search Skills, Browse Generated Images, Create Scheduled Task and Run Integration Action are off by default. Turn them on in Raycast Settings → Extensions → Langdock.
 
 ## Notes
 

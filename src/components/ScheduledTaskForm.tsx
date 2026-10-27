@@ -1,8 +1,9 @@
 import { Action, ActionPanel, Form, Icon, showToast, Toast, useNavigation } from "@raycast/api";
-import { showFailureToast, useCachedPromise } from "@raycast/utils";
+import { useCachedPromise } from "@raycast/utils";
 import { useState } from "react";
 import { buildScheduledTask, ScheduledTaskFormValues } from "../lib/forms";
 import { createScheduledTask, listAgents, ScheduledTask } from "../lib/langdock";
+import { showLangdockError } from "../lib/errors";
 
 const DAYS = ["Sunday", "Monday", "Tuesday", "Wednesday", "Thursday", "Friday", "Saturday"];
 const FREQUENCIES: { value: ScheduledTask["frequency"]; title: string }[] = [
@@ -33,7 +34,7 @@ export function ScheduledTaskForm(props: { onCreated?: () => void }) {
       props.onCreated?.();
       pop();
     } catch (error) {
-      await showFailureToast(error, { title: "Could not create the task" });
+      await showLangdockError(error, { title: "Could not create the task" });
     } finally {
       setIsSaving(false);
     }
@@ -43,7 +44,6 @@ export function ScheduledTaskForm(props: { onCreated?: () => void }) {
 
   return (
     <Form
-      navigationTitle="Create Scheduled Task"
       isLoading={isLoading || isSaving}
       actions={
         <ActionPanel>

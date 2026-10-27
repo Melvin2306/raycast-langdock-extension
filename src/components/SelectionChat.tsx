@@ -42,7 +42,6 @@ export function SelectionChat(props: {
   if (selection.fromClipboard && !clipboardConfirmed) {
     return (
       <Detail
-        navigationTitle={props.label}
         markdown={`## No text selected\n\nSend the text from your clipboard to Langdock?\n\n\`\`\`\n${selection.text.slice(0, 2000).replace(/```/g, "ˋˋˋ")}${selection.text.length > 2000 ? "\n…" : ""}\n\`\`\``}
         actions={
           <ActionPanel>

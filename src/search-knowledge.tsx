@@ -1,14 +1,14 @@
 import { Action, ActionPanel, Icon, List } from "@raycast/api";
-import { showFailureToast, useCachedPromise } from "@raycast/utils";
+import { useCachedPromise } from "@raycast/utils";
 import { useState } from "react";
 import { AddToKnowledgeBase } from "./components/KnowledgeUpload";
-import { ApiKeyMissing } from "./components/ApiKeyMissing";
 import { Chat } from "./components/Chat";
-import { apiKey, KnowledgeResult, listKnowledgeBases, searchKnowledge } from "./lib/langdock";
+import { KnowledgeResult, listKnowledgeBases, searchKnowledge } from "./lib/langdock";
 import { escapeMarkdown, safeHttpUrl, sanitizeMarkdown, wrapUntrusted } from "./lib/markdown";
+import { showLangdockError } from "./lib/errors";
 
 export default function Command() {
-  return apiKey() ? <SearchKnowledge /> : <ApiKeyMissing />;
+  return <SearchKnowledge />;
 }
 
 function SearchKnowledge() {
@@ -18,7 +18,7 @@ function SearchKnowledge() {
     execute: hasQuery,
     keepPreviousData: true,
     onError: (error) => {
-      showFailureToast(error, { title: "Knowledge search failed" });
+      showLangdockError(error, { title: "Knowledge search failed" });
     },
   });
   const { data: knowledgeBases, isLoading: isLoadingBases } = useCachedPromise(listKnowledgeBases, [], {

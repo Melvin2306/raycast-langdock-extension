@@ -63,6 +63,10 @@ export class LangdockError extends Error {
     readonly status?: number,
     /** Parsed JSON error body, when there was one. */
     readonly body?: unknown,
+    /** API path of the failed request, used to name the missing scope. */
+    readonly path?: string,
+    /** Set when the extension preferences are invalid, so the fix is in the preferences. */
+    readonly isConfigError = false,
   ) {
     super(message);
     this.name = "LangdockError";
@@ -70,9 +74,10 @@ export class LangdockError extends Error {
 }
 
 async function request(path: string, init: RequestInit = {}): Promise<Response> {
-  if (!apiKey()) throw new LangdockError("No API key set. Add one in the extension preferences.", 401);
+  if (!apiKey())
+    throw new LangdockError("No API key set. Add one in the extension preferences.", 401, undefined, path, true);
   const baseUrlError = apiBaseUrlError();
-  if (baseUrlError) throw new LangdockError(baseUrlError);
+  if (baseUrlError) throw new LangdockError(baseUrlError, undefined, undefined, path, true);
   const response = await fetch(`${apiBaseUrl()}${path}`, {
     ...init,
     headers: {
@@ -82,11 +87,11 @@ async function request(path: string, init: RequestInit = {}): Promise<Response> 
       ...init.headers,
     },
   });
-  if (!response.ok) throw await toError(response);
+  if (!response.ok) throw await toError(response, path);
   return response;
 }
 
-async function toError(response: Response): Promise<LangdockError> {
+async function toError(response: Response, path: string): Promise<LangdockError> {
   let detail = "";
   let body: unknown;
   try {
@@ -114,7 +119,7 @@ async function toError(response: Response): Promise<LangdockError> {
           ? "Rate limit reached, try again in a moment."
           : "";
   const message = [detail || `${response.status} ${response.statusText}`, hint].filter(Boolean).join(" — ");
-  return new LangdockError(String(message), response.status, body);
+  return new LangdockError(String(message), response.status, body, path);
 }
 
 // Models
@@ -239,6 +244,12 @@ export interface Prompt {
   prompt: string;
   sharedWithWorkspace: boolean;
   updatedAt: string | null;
+}
+
+export async function getPrompt(id: string): Promise<Prompt> {
+  const response = await request(`/prompts/v1/${encodeURIComponent(id)}`);
+  const json = (await response.json()) as { prompt: Prompt };
+  return json.prompt;
 }
 
 export async function listPrompts(query: string): Promise<Prompt[]> {

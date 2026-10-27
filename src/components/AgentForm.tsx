@@ -1,22 +1,23 @@
 import { Action, ActionPanel, Detail, Form, Icon, useNavigation } from "@raycast/api";
-import { showFailureToast, useCachedPromise } from "@raycast/utils";
+import { useCachedPromise } from "@raycast/utils";
 import { statSync } from "node:fs";
 import { useState } from "react";
 import { agentFieldId, FormValue, promptFromAgentForm } from "../lib/forms";
 import { getAgent } from "../lib/langdock";
 import { ChatAgent, Chat } from "./Chat";
+import { showLangdockError } from "../lib/errors";
 
 /** Input form for agents that take structured input instead of a free-text prompt. */
 export function AgentForm(props: { agent: ChatAgent }) {
   const { push } = useNavigation();
   const { data: agent, isLoading } = useCachedPromise(getAgent, [props.agent.id], {
     onError: (error) => {
-      showFailureToast(error, { title: "Could not load the agent's form" });
+      showLangdockError(error, { title: "Could not load the agent's form" });
     },
   });
   const [errors, setErrors] = useState<Record<string, string>>({});
 
-  if (isLoading && !agent) return <Form isLoading navigationTitle={props.agent.name} />;
+  if (isLoading && !agent) return <Form isLoading />;
   const fields = [...(agent?.inputFields ?? [])].sort((a, b) => a.order - b.order);
   if (agent && fields.length === 0) {
     return <Detail markdown={`## ${props.agent.name}\n\nThis agent has no input fields.`} />;
@@ -48,7 +49,6 @@ export function AgentForm(props: { agent: ChatAgent }) {
 
   return (
     <Form
-      navigationTitle={props.agent.name}
       isLoading={isLoading}
       actions={
         <ActionPanel>
@@ -56,6 +56,7 @@ export function AgentForm(props: { agent: ChatAgent }) {
         </ActionPanel>
       }
     >
+      <Form.Description title="Agent" text={[props.agent.emojiIcon, props.agent.name].filter(Boolean).join(" ")} />
       {agent?.description && <Form.Description text={agent.description} />}
       {fields.map((field, index) => {
         const id = agentFieldId(index);

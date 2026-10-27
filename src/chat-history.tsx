@@ -1,13 +1,11 @@
 import { Action, ActionPanel, Alert, Icon, Keyboard, List, confirmAlert } from "@raycast/api";
 import { usePromise } from "@raycast/utils";
-import { ApiKeyMissing } from "./components/ApiKeyMissing";
 import { Chat } from "./components/Chat";
 import { clearConversations, deleteConversation, getConversations, transcript } from "./lib/history";
 import { sanitizeMarkdown } from "./lib/markdown";
-import { apiKey } from "./lib/langdock";
 
 export default function Command() {
-  return apiKey() ? <ChatHistory /> : <ApiKeyMissing />;
+  return <ChatHistory />;
 }
 
 function ChatHistory() {

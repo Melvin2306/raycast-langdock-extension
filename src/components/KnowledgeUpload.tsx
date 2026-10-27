@@ -1,10 +1,11 @@
 import { Action, ActionPanel, Form, getSelectedFinderItems, Icon, showToast, Toast, useNavigation } from "@raycast/api";
-import { showFailureToast, useCachedPromise, usePromise } from "@raycast/utils";
+import { useCachedPromise, usePromise } from "@raycast/utils";
 import { realpathSync, statSync } from "node:fs";
 import { basename } from "node:path";
 import { useState } from "react";
 import { listKnowledgeBases, uploadToKnowledgeBase } from "../lib/langdock";
 import { safeHttpUrl } from "../lib/markdown";
+import { showLangdockError } from "../lib/errors";
 
 async function finderSelection(): Promise<string[]> {
   try {
@@ -19,7 +20,7 @@ export function AddToKnowledgeBase(props: { knowledgeBaseId?: string }) {
   const { data: selectedFiles, isLoading: isLoadingFiles } = usePromise(finderSelection);
   const { data: bases, isLoading } = useCachedPromise(listKnowledgeBases, [], {
     onError: (error) => {
-      showFailureToast(error, { title: "Could not load knowledge bases" });
+      showLangdockError(error, { title: "Could not load knowledge bases" });
     },
   });
   const [isUploading, setIsUploading] = useState(false);
@@ -69,7 +70,6 @@ export function AddToKnowledgeBase(props: { knowledgeBaseId?: string }) {
 
   return (
     <Form
-      navigationTitle="Add to Knowledge Base"
       isLoading={isLoading || isLoadingFiles || isUploading}
       actions={
         editable.length > 0 ? (

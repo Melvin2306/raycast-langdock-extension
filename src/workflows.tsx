@@ -1,8 +1,8 @@
 import { Action, ActionPanel, Color, Icon, Keyboard, List } from "@raycast/api";
-import { showFailureToast, useCachedPromise } from "@raycast/utils";
-import { ApiKeyMissing } from "./components/ApiKeyMissing";
-import { apiKey, listWorkflowRuns, listWorkflows, Workflow, WorkflowRun } from "./lib/langdock";
+import { useCachedPromise } from "@raycast/utils";
+import { listWorkflowRuns, listWorkflows, Workflow, WorkflowRun } from "./lib/langdock";
 import { escapeMarkdown } from "./lib/markdown";
+import { showLangdockError } from "./lib/errors";
 
 const RUN_STATUS: Record<string, { color: Color; icon: Icon }> = {
   COMPLETED: { color: Color.Green, icon: Icon.CheckCircle },
@@ -14,7 +14,7 @@ const RUN_STATUS: Record<string, { color: Color; icon: Icon }> = {
 };
 
 export default function Command() {
-  return apiKey() ? <Workflows /> : <ApiKeyMissing />;
+  return <Workflows />;
 }
 
 function Workflows() {
@@ -24,7 +24,7 @@ function Workflows() {
     revalidate,
   } = useCachedPromise(listWorkflows, [], {
     onError: (error) => {
-      showFailureToast(error, { title: "Could not load workflows" });
+      showLangdockError(error, { title: "Could not load workflows" });
     },
   });
 
@@ -73,7 +73,7 @@ function WorkflowRuns(props: { workflow: Workflow }) {
     revalidate,
   } = useCachedPromise(listWorkflowRuns, [workflow.id], {
     onError: (error) => {
-      showFailureToast(error, { title: "Could not load runs", message: "Reading runs needs editor access" });
+      showLangdockError(error, { title: "Could not load runs", message: "Reading runs needs editor access" });
     },
   });
 

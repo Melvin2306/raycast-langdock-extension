@@ -18,6 +18,7 @@ import {
   uploadToKnowledgeBase,
   webAppUrl,
 } from "../src/lib/langdock";
+import { scopeForPath } from "../src/lib/scopes";
 import { preferences } from "./raycast-mock";
 
 type Handler = (req: IncomingMessage, body: string, res: ServerResponse) => void;
@@ -240,4 +241,26 @@ test("scheduled tasks are created with the validated fields", async () => {
   const task = await createScheduledTask({ name: "Digest", prompt: "p", frequency: "DAILY", timeOfDay: "09:00" });
   assert.equal(task.id, "t1");
   assert.equal(requests.at(-1)!.url, "/automations/v1");
+});
+
+test("errors record the failing path, and paths map to the scope a key needs", async () => {
+  handler = (_req, _body, res) => json(res, 403, { message: "Forbidden" });
+  await assert.rejects(listAgents(), (error: unknown) => {
+    assert.ok(error instanceof LangdockError);
+    assert.equal(error.status, 403);
+    assert.equal(scopeForPath(error.path), "Agent API");
+    return true;
+  });
+  assert.equal(scopeForPath("/automations/v1"), "Scheduled Tasks API (workspace keys)");
+  assert.equal(scopeForPath("/knowledge/search"), "Knowledge Folder API");
+  assert.equal(scopeForPath("/attachment/v1/upload"), "Knowledge Folder API");
+  assert.equal(scopeForPath("/openai/eu/v1/images/generations"), "Completion API");
+  assert.equal(scopeForPath("/unknown"), undefined);
+});
+
+test("an invalid base URL is reported as a preferences problem", async () => {
+  const before = preferences.apiBaseUrl;
+  preferences.apiBaseUrl = "http://ld.example.com";
+  await assert.rejects(listAgents(), (error: unknown) => error instanceof LangdockError && error.isConfigError);
+  preferences.apiBaseUrl = before;
 });

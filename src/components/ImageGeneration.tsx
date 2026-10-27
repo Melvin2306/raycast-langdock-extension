@@ -5,22 +5,24 @@ import {
   Detail,
   Form,
   Icon,
-  List,
+  LaunchType,
+  launchCommand,
   showHUD,
   showInFinder,
   useNavigation,
   Keyboard,
 } from "@raycast/api";
-import { showFailureToast, useCachedPromise } from "@raycast/utils";
+import { useCachedPromise } from "@raycast/utils";
 import { useEffect, useRef, useState } from "react";
 import { copyFile } from "node:fs/promises";
 import { homedir } from "node:os";
 import { join } from "node:path";
 import { generateImage, ImageQuality, ImageRegion, ImageSize, listImageModels } from "../lib/langdock";
 import { saveImage } from "../lib/images";
-import { describeModel, displayName, groupByProvider, providerIcon, providerName, regionLabel } from "../lib/models";
-import { IMAGE_QUALITIES, IMAGE_SIZES, useSettings } from "../lib/settings";
+import { describeModel, displayName, groupByProvider, providerIcon, regionLabel } from "../lib/models";
+import { IMAGE_QUALITIES, IMAGE_SIZES, imagePreferences, useSettings } from "../lib/settings";
 import { escapeMarkdown } from "../lib/markdown";
+import { showLangdockError } from "../lib/errors";
 
 export interface ImageRequest {
   prompt: string;
@@ -34,25 +36,26 @@ export interface ImageRequest {
 export function useImageModels(region: ImageRegion) {
   return useCachedPromise(listImageModels, [region], {
     onError: (error) => {
-      showFailureToast(error, { title: "Could not load image models" });
+      showLangdockError(error, { title: "Could not load image models" });
     },
   });
 }
 
 export function GenerateImageForm(props: { initialPrompt?: string }) {
   const { push } = useNavigation();
-  const { settings, isLoading: isLoadingSettings } = useSettings();
-  const { data: models, isLoading } = useImageModels(settings.imageRegion);
+  const { region, size, quality } = imagePreferences();
+  const { settings, update, isLoading: isLoadingSettings } = useSettings();
+  const { data: models, isLoading } = useImageModels(region);
   const [model, setModel] = useState<string>();
   const defaultModel = settings.imageModel ?? models?.[0];
   // Keep a manually entered default model selectable even if discovery did not list it.
   const modelOptions = [...new Set([...(settings.imageModel ? [settings.imageModel] : []), ...(models ?? [])])];
   const hasModelList = modelOptions.length > 0;
+  const selected = model ?? defaultModel;
 
   return (
     <Form
       isLoading={isLoading || isLoadingSettings}
-      navigationTitle="Generate Image"
       actions={
         <ActionPanel>
           <Action.SubmitForm
@@ -65,13 +68,29 @@ export function GenerateImageForm(props: { initialPrompt?: string }) {
                   request={{
                     prompt: values.prompt.trim(),
                     model: values.model?.trim() || defaultModel,
-                    region: settings.imageRegion,
+                    region,
                     size: values.size,
                     quality: values.quality,
                   }}
                 />,
               );
             }}
+          />
+          {selected && selected !== settings.imageModel && (
+            <Action
+              title="Set Selected Model as Default"
+              icon={Icon.Star}
+              shortcut={{ modifiers: ["cmd", "shift"], key: "d" }}
+              onAction={async () => {
+                await update({ imageModel: selected });
+                await showHUD(`${displayName(selected)} is now the default image model`);
+              }}
+            />
+          )}
+          <Action
+            title="Browse Generated Images"
+            icon={Icon.AppWindowGrid3x3}
+            onAction={() => launchCommand({ name: "image-history", type: LaunchType.UserInitiated })}
           />
         </ActionPanel>
       }
@@ -83,14 +102,14 @@ export function GenerateImageForm(props: { initialPrompt?: string }) {
         defaultValue={props.initialPrompt}
       />
       {hasModelList || isLoading ? (
-        <Form.Dropdown id="model" title="Model" value={model ?? defaultModel} onChange={setModel}>
+        <Form.Dropdown id="model" title="Model" value={selected} onChange={setModel}>
           {groupByProvider(modelOptions).map(([provider, ids]) => (
             <Form.Dropdown.Section key={provider} title={provider}>
               {ids.map((id) => (
                 <Form.Dropdown.Item
                   key={id}
                   value={id}
-                  title={`${displayName(id)} · ${regionLabel({ region: settings.imageRegion })}`}
+                  title={`${displayName(id)} · ${regionLabel({ region })}${id === settings.imageModel ? " · Default" : ""}`}
                   icon={providerIcon(id)}
                   keywords={[id, provider]}
                 />
@@ -107,24 +126,18 @@ export function GenerateImageForm(props: { initialPrompt?: string }) {
           info="Langdock did not return a list of image models for this region. Ask your admin for the image model ID."
         />
       )}
-      {!isLoadingSettings && (
-        <>
-          <Form.Dropdown id="size" title="Size" defaultValue={settings.imageSize}>
-            {IMAGE_SIZES.map((size) => (
-              <Form.Dropdown.Item key={size.value} value={size.value} title={size.title} />
-            ))}
-          </Form.Dropdown>
-          <Form.Dropdown id="quality" title="Quality" defaultValue={settings.imageQuality}>
-            {IMAGE_QUALITIES.map((quality) => (
-              <Form.Dropdown.Item key={quality.value} value={quality.value} title={quality.title} />
-            ))}
-          </Form.Dropdown>
-        </>
-      )}
-      {(model ?? defaultModel) && describeModel(model ?? defaultModel ?? "") && (
-        <Form.Description title="About" text={describeModel(model ?? defaultModel ?? "") ?? ""} />
-      )}
-      <Form.Description text="Change the default image model, region, size and quality in Langdock Settings." />
+      <Form.Dropdown id="size" title="Size" defaultValue={size}>
+        {IMAGE_SIZES.map((option) => (
+          <Form.Dropdown.Item key={option.value} value={option.value} title={option.title} />
+        ))}
+      </Form.Dropdown>
+      <Form.Dropdown id="quality" title="Quality" defaultValue={quality}>
+        {IMAGE_QUALITIES.map((option) => (
+          <Form.Dropdown.Item key={option.value} value={option.value} title={option.title} />
+        ))}
+      </Form.Dropdown>
+      {selected && describeModel(selected) && <Form.Description title="About" text={describeModel(selected) ?? ""} />}
+      <Form.Description text="Defaults for region, size and quality are in the command's preferences." />
     </Form>
   );
 }
@@ -165,7 +178,7 @@ export function ImageResult(props: { request: ImageRequest }) {
       } catch (err) {
         if (controller.signal.aborted) return;
         setError(err instanceof Error ? err.message : String(err));
-        await showFailureToast(err, { title: "Image generation failed" });
+        await showLangdockError(err, { title: "Image generation failed" });
       }
     })();
     return () => controller.abort();
@@ -179,7 +192,6 @@ export function ImageResult(props: { request: ImageRequest }) {
 
   return (
     <Detail
-      navigationTitle="Generated Image"
       isLoading={!image && !error}
       markdown={markdown}
       metadata={
@@ -243,98 +255,5 @@ export function ImageFileActions(props: { path: string }) {
       <Action.Open title="Open in Preview" target={path} application="Preview" icon={Icon.Eye} />
       <Action.ShowInFinder path={path} />
     </ActionPanel.Section>
-  );
-}
-
-/** Picker for the default image model in Langdock Settings. */
-export function ImageModelPicker(props: {
-  region: ImageRegion;
-  selected?: string;
-  onSelect: (model: string | undefined) => void;
-}) {
-  const { pop } = useNavigation();
-  const { data: models, isLoading } = useImageModels(props.region);
-  const select = (model: string | undefined) => {
-    props.onSelect(model);
-    pop();
-  };
-
-  return (
-    <List isLoading={isLoading} navigationTitle="Choose Image Model" searchBarPlaceholder="Search image models…">
-      <List.Item
-        icon={Icon.Wand}
-        title="First Available"
-        subtitle="Use whichever image model Langdock lists first"
-        accessories={props.selected ? [] : [{ icon: Icon.CheckCircle }]}
-        actions={
-          <ActionPanel>
-            <Action title="Use First Available" icon={Icon.Checkmark} onAction={() => select(undefined)} />
-          </ActionPanel>
-        }
-      />
-      {groupByProvider(models ?? []).map(([provider, ids]) => (
-        <List.Section key={provider} title={provider}>
-          {ids.map((model) => (
-            <List.Item
-              key={model}
-              icon={providerIcon(model)}
-              title={displayName(model)}
-              subtitle={describeModel(model)}
-              keywords={[model, providerName(model)]}
-              accessories={[
-                ...(model === props.selected ? [{ icon: Icon.CheckCircle, tooltip: "Current default" }] : []),
-                { tag: regionLabel({ region: props.region }) },
-              ]}
-              actions={
-                <ActionPanel>
-                  <Action title="Use Model" icon={Icon.Checkmark} onAction={() => select(model)} />
-                  <Action.Push
-                    title="Enter Model ID"
-                    icon={Icon.Pencil}
-                    target={<ImageModelIdForm onSubmit={select} />}
-                  />
-                  <Action.CopyToClipboard title="Copy Model ID" content={model} />
-                </ActionPanel>
-              }
-            />
-          ))}
-        </List.Section>
-      ))}
-      {!isLoading && !models?.length && (
-        <List.Item
-          icon={Icon.Pencil}
-          title="Enter Model ID…"
-          subtitle="Langdock did not return image models for this region"
-          actions={
-            <ActionPanel>
-              <Action.Push title="Enter Model ID" icon={Icon.Pencil} target={<ImageModelIdForm onSubmit={select} />} />
-            </ActionPanel>
-          }
-        />
-      )}
-    </List>
-  );
-}
-
-function ImageModelIdForm(props: { onSubmit: (model: string) => void }) {
-  const { pop } = useNavigation();
-  return (
-    <Form
-      navigationTitle="Enter Image Model ID"
-      actions={
-        <ActionPanel>
-          <Action.SubmitForm
-            title="Save"
-            onSubmit={(values: { model: string }) => {
-              if (!values.model.trim()) return;
-              pop();
-              props.onSubmit(values.model.trim());
-            }}
-          />
-        </ActionPanel>
-      }
-    >
-      <Form.TextField id="model" title="Model ID" placeholder="e.g. gpt-image-1" />
-    </Form>
   );
 }

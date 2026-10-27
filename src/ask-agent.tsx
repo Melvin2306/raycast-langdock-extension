@@ -1,11 +1,23 @@
-import { Action, ActionPanel, Color, Form, Icon, Keyboard, List, showToast, Toast, useNavigation } from "@raycast/api";
-import { showFailureToast, useCachedPromise, useLocalStorage } from "@raycast/utils";
-import { ApiKeyMissing } from "./components/ApiKeyMissing";
+import {
+  Action,
+  ActionPanel,
+  Color,
+  Form,
+  Icon,
+  Keyboard,
+  LaunchProps,
+  List,
+  showToast,
+  Toast,
+  useNavigation,
+} from "@raycast/api";
+import { createDeeplink, useCachedPromise, useLocalStorage } from "@raycast/utils";
 import { AgentForm } from "./components/AgentForm";
-import { AskForm, Chat } from "./components/Chat";
-import { AgentListItem, apiKey, getAgent, LangdockError, listAgents, webAppUrl } from "./lib/langdock";
+import { Chat, ChatAgent } from "./components/Chat";
+import { AgentListItem, getAgent, LangdockError, listAgents, webAppUrl } from "./lib/langdock";
 import { displayName } from "./lib/models";
 import { RECENT_AGENTS_KEY, SAVED_AGENTS_KEY } from "./lib/settings";
+import { showLangdockError } from "./lib/errors";
 
 /** Agents added by ID, for deployments without the agent list endpoint or agents it doesn't return. */
 interface SavedAgent {
@@ -32,8 +44,35 @@ interface AgentRow {
 const MAX_RECENT = 6;
 const UUID_PATTERN = /[0-9a-f]{8}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{12}/i;
 
-export default function Command() {
-  return apiKey() ? <Agents /> : <ApiKeyMissing />;
+export default function Command(props: LaunchProps<{ launchContext?: { agentId?: string } }>) {
+  // Quicklinks open one agent directly.
+  const agentId = props.launchContext?.agentId;
+  return agentId ? <AgentChat agentId={agentId} /> : <Agents />;
+}
+
+/** Opens an agent: its form for agents with structured input, otherwise a chat with its conversation starters. */
+function AgentChat(props: { agentId: string; agent?: ChatAgent }) {
+  const {
+    data: agent,
+    isLoading,
+    error,
+  } = useCachedPromise(getAgent, [props.agentId], {
+    onError: (err) => {
+      showLangdockError(err, { title: "Could not load the agent" });
+    },
+  });
+  const chatAgent: ChatAgent | undefined = agent
+    ? { id: agent.id, name: agent.name, emojiIcon: agent.emojiIcon }
+    : props.agent;
+  if (!agent && (isLoading || !error)) return <List isLoading />;
+  if (!chatAgent)
+    return (
+      <List>
+        <List.EmptyView icon={Icon.Stars} title="Agent not found" />
+      </List>
+    );
+  if (agent?.inputType === "STRUCTURED") return <AgentForm agent={chatAgent} />;
+  return <Chat agent={chatAgent} starters={agent?.conversationStarters} />;
 }
 
 function Agents() {
@@ -47,7 +86,7 @@ function Agents() {
     onError: (error) => {
       // 404: deployment without the list endpoint; saved agents still work.
       if (!(error instanceof LangdockError && error.status === 404)) {
-        showFailureToast(error, { title: "Could not load agents" });
+        showLangdockError(error, { title: "Could not load agents" });
       }
     },
   });
@@ -96,17 +135,7 @@ function Agents() {
 
   async function ask(agent: AgentRow) {
     await setRecent({ ...recent, [agent.id]: new Date().toISOString() });
-    if (agent.inputType === "STRUCTURED") {
-      push(<AgentForm agent={agent} />);
-      return;
-    }
-    push(
-      <AskForm
-        title={agent.name}
-        defaultValue={agent.conversationStarters?.[0]}
-        onSubmit={(question) => push(<Chat initialPrompt={question} agent={agent} />)}
-      />,
-    );
+    push(<AgentChat agentId={agent.id} agent={agent} />);
   }
 
   async function forget(agent: AgentRow) {
@@ -158,6 +187,15 @@ function Agents() {
             title="Open Agent in Langdock"
             url={`${webAppUrl()}/agents/${agent.id}/edit`}
             shortcut={Keyboard.Shortcut.Common.Open}
+          />
+          <Action.CreateQuicklink
+            title="Create Quicklink"
+            icon={Icon.Link}
+            shortcut={{ modifiers: ["cmd", "shift"], key: "l" }}
+            quicklink={{
+              name: `Ask ${agent.name}`,
+              link: createDeeplink({ command: "ask-agent", context: { agentId: agent.id } }),
+            }}
           />
           <Action.CopyToClipboard title="Copy Agent ID" content={agent.id} />
           {addAction}
@@ -224,7 +262,7 @@ function AddAgentForm(props: { onAdd: (agent: SavedAgent) => Promise<void> }) {
       toast.title = `Added ${agent.name}`;
       pop();
     } catch (error) {
-      await showFailureToast(error, { title: "Could not load agent" });
+      await showLangdockError(error, { title: "Could not load agent" });
     }
   }
 

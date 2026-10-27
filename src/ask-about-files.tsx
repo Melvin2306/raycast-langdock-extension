@@ -12,10 +12,8 @@ import {
 import { usePromise } from "@raycast/utils";
 import { realpathSync, statSync } from "node:fs";
 import { useState } from "react";
-import { ApiKeyMissing } from "./components/ApiKeyMissing";
 import { Chat } from "./components/Chat";
 import { ModelDropdown } from "./components/ModelPicker";
-import { apiKey } from "./lib/langdock";
 
 /** Total size of all files. Inline files are resent with every follow-up, so this bounds each request. */
 const MAX_TOTAL_BYTES = 20 * 1024 * 1024;
@@ -29,7 +27,6 @@ export interface AskAboutFilesContext {
 }
 
 export default function Command(props: LaunchProps<{ launchContext?: AskAboutFilesContext }>) {
-  if (!apiKey()) return <ApiKeyMissing />;
   const context = props.launchContext;
   const files = (context?.files ?? []).filter((path) => statSync(path, { throwIfNoEntry: false })?.isFile());
   if (context?.send && files.length > 0 && context.question) {
@@ -74,7 +71,6 @@ function AskAboutFiles(props: { files?: string[]; question?: string }) {
 
   return (
     <Form
-      navigationTitle="Ask About Files"
       actions={
         <ActionPanel>
           <Action.SubmitForm title="Ask" icon={Icon.ArrowRight} onSubmit={submit} />

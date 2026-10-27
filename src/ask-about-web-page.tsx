@@ -1,8 +1,6 @@
 import { Action, ActionPanel, BrowserExtension, Detail, Icon, LaunchProps } from "@raycast/api";
 import { usePromise } from "@raycast/utils";
-import { ApiKeyMissing } from "./components/ApiKeyMissing";
 import { Chat } from "./components/Chat";
-import { apiKey } from "./lib/langdock";
 import { wrapUntrusted } from "./lib/markdown";
 
 /** Long pages are cut so the request stays within the model's context. */
@@ -22,7 +20,6 @@ async function readActiveTab(): Promise<Page> {
 }
 
 export default function Command(props: LaunchProps<{ arguments: Arguments.AskAboutWebPage }>) {
-  if (!apiKey()) return <ApiKeyMissing />;
   return <AskAboutWebPage question={props.arguments.question?.trim()} />;
 }
 

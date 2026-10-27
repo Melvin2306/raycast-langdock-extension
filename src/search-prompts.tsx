@@ -1,13 +1,29 @@
-import { Action, ActionPanel, Icon, List } from "@raycast/api";
-import { showFailureToast, useCachedPromise } from "@raycast/utils";
+import { Action, ActionPanel, Icon, LaunchProps, List } from "@raycast/api";
+import { createDeeplink, useCachedPromise } from "@raycast/utils";
 import { useState } from "react";
 import { Chat } from "./components/Chat";
-import { listPrompts, webAppUrl, apiKey } from "./lib/langdock";
-import { ApiKeyMissing } from "./components/ApiKeyMissing";
+import { showLangdockError } from "./lib/errors";
+import { getPrompt, listPrompts, webAppUrl } from "./lib/langdock";
 import { sanitizeMarkdown } from "./lib/markdown";
 
-export default function Command() {
-  return apiKey() ? <PromptSearch /> : <ApiKeyMissing />;
+export default function Command(props: LaunchProps<{ launchContext?: { promptId?: string } }>) {
+  // Quicklinks run one prompt directly.
+  const promptId = props.launchContext?.promptId;
+  return promptId ? <RunPrompt promptId={promptId} /> : <PromptSearch />;
+}
+
+function RunPrompt(props: { promptId: string }) {
+  const { data: prompt, isLoading } = useCachedPromise(getPrompt, [props.promptId], {
+    onError: (error) => {
+      showLangdockError(error, { title: "Could not load the prompt" });
+    },
+  });
+  if (!prompt) {
+    return (
+      <List isLoading={isLoading}>{!isLoading && <List.EmptyView icon={Icon.Text} title="Prompt not found" />}</List>
+    );
+  }
+  return <Chat initialPrompt={prompt.prompt} displayPrompt={prompt.title} />;
 }
 
 function PromptSearch() {
@@ -15,7 +31,7 @@ function PromptSearch() {
   const { data: prompts, isLoading } = useCachedPromise(listPrompts, [searchText], {
     keepPreviousData: true,
     onError: (error) => {
-      showFailureToast(error, { title: "Could not load prompts" });
+      showLangdockError(error, { title: "Could not load prompts" });
     },
   });
 
@@ -44,10 +60,19 @@ function PromptSearch() {
               <Action.Push
                 title="Run with Langdock"
                 icon={Icon.Bubble}
-                target={<Chat initialPrompt={prompt.prompt} />}
+                target={<Chat initialPrompt={prompt.prompt} displayPrompt={prompt.title} />}
                 shortcut={{ modifiers: ["cmd"], key: "return" }}
               />
               <Action.CopyToClipboard title="Copy Prompt" content={prompt.prompt} />
+              <Action.CreateQuicklink
+                title="Create Quicklink"
+                icon={Icon.Link}
+                shortcut={{ modifiers: ["cmd", "shift"], key: "l" }}
+                quicklink={{
+                  name: prompt.title,
+                  link: createDeeplink({ command: "search-prompts", context: { promptId: prompt.id } }),
+                }}
+              />
               <Action.OpenInBrowser title="Open Langdock" url={webAppUrl()} />
             </ActionPanel>
           }

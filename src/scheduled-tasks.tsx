@@ -1,16 +1,16 @@
 import { Action, ActionPanel, Color, Icon, Keyboard, List, showToast, Toast } from "@raycast/api";
-import { showFailureToast, useCachedPromise } from "@raycast/utils";
+import { useCachedPromise } from "@raycast/utils";
 import { useState } from "react";
-import { ApiKeyMissing } from "./components/ApiKeyMissing";
 import { ScheduledTaskForm } from "./components/ScheduledTaskForm";
-import { apiKey, listScheduledTasks, runScheduledTask, ScheduledTask, setScheduledTaskActive } from "./lib/langdock";
+import { listScheduledTasks, runScheduledTask, ScheduledTask, setScheduledTaskActive } from "./lib/langdock";
 import { sanitizeMarkdown } from "./lib/markdown";
+import { showLangdockError } from "./lib/errors";
 
 // The API numbers days like cron: 0 = Sunday … 6 = Saturday.
 const DAYS = ["Sunday", "Monday", "Tuesday", "Wednesday", "Thursday", "Friday", "Saturday"];
 
 export default function Command() {
-  return apiKey() ? <ScheduledTasks /> : <ApiKeyMissing />;
+  return <ScheduledTasks />;
 }
 
 function ScheduledTasks() {
@@ -22,7 +22,7 @@ function ScheduledTasks() {
     revalidate,
   } = useCachedPromise(listScheduledTasks, [], {
     onError: (error) => {
-      showFailureToast(error, { title: "Could not load scheduled tasks" });
+      showLangdockError(error, { title: "Could not load scheduled tasks" });
     },
   });
 
@@ -34,7 +34,7 @@ function ScheduledTasks() {
       toast.title = "Run queued";
       toast.message = "The result appears in your Langdock chats";
     } catch (error) {
-      await showFailureToast(error, { title: "Could not run task" });
+      await showLangdockError(error, { title: "Could not run task" });
     }
   }
 
@@ -45,7 +45,7 @@ function ScheduledTasks() {
       });
       await showToast({ style: Toast.Style.Success, title: task.active ? "Task paused" : "Task resumed" });
     } catch (error) {
-      await showFailureToast(error, { title: "Could not update task" });
+      await showLangdockError(error, { title: "Could not update task" });
     }
   }
 

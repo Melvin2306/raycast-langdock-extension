@@ -13,14 +13,12 @@ import {
   Toast,
   useNavigation,
 } from "@raycast/api";
-import { showFailureToast, useCachedPromise } from "@raycast/utils";
+import { useCachedPromise } from "@raycast/utils";
 import { useState } from "react";
-import { ApiKeyMissing } from "./components/ApiKeyMissing";
 import { actionInputs, FormValue } from "./lib/forms";
 import {
   ActionInputField,
   ActionResult,
-  apiKey,
   executeIntegrationAction,
   getIntegrationActions,
   IntegrationSummary,
@@ -28,12 +26,13 @@ import {
   listIntegrations,
 } from "./lib/langdock";
 import { safeHttpUrl } from "./lib/markdown";
+import { showLangdockError } from "./lib/errors";
 
 /** Field types that can't be entered in a Raycast form. */
 const UNSUPPORTED_FIELDS = new Set<ActionInputField["type"]>(["FILE", "VECTOR"]);
 
 export default function Command() {
-  return apiKey() ? <Integrations /> : <ApiKeyMissing />;
+  return <Integrations />;
 }
 
 function Integrations() {
@@ -43,7 +42,7 @@ function Integrations() {
     revalidate,
   } = useCachedPromise(listIntegrations, [], {
     onError: (error) => {
-      showFailureToast(error, { title: "Could not load integrations" });
+      showLangdockError(error, { title: "Could not load integrations" });
     },
   });
 
@@ -115,7 +114,7 @@ function ActionForm(props: { integration: IntegrationSummary; actionId: string; 
     [integration.id],
     {
       onError: (error) => {
-        showFailureToast(error, { title: "Could not load the action" });
+        showLangdockError(error, { title: "Could not load the action" });
       },
     },
   );
@@ -153,7 +152,7 @@ function ActionForm(props: { integration: IntegrationSummary; actionId: string; 
       toast.title = result.success ? `${action.name} finished` : `${action.name} failed`;
       push(<ActionResultView title={action.name} result={result} />);
     } catch (error) {
-      await showFailureToast(error, { title: `${action.name} failed` });
+      await showLangdockError(error, { title: `${action.name} failed` });
     } finally {
       setIsRunning(false);
     }

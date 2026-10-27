@@ -95,7 +95,8 @@
       "title": "Explain Selection",
       "subtitle": "Langdock",
       "description": "Explain the selected text in simple terms.",
-      "mode": "view"
+      "mode": "view",
+      "disabledByDefault": true
     },
     {
       "name": "ask-about-web-page",
@@ -167,7 +168,8 @@
       "title": "Search Skills",
       "subtitle": "Langdock",
       "description": "Browse your Langdock skills and use them in a chat.",
-      "mode": "view"
+      "mode": "view",
+      "disabledByDefault": true
     },
     {
       "name": "search-meetings",
@@ -189,6 +191,78 @@
           "type": "text",
           "required": false
         }
+      ],
+      "preferences": [
+        {
+          "name": "imageRegion",
+          "title": "Region",
+          "description": "Region of the image models to use.",
+          "type": "dropdown",
+          "required": false,
+          "default": "eu",
+          "data": [
+            {
+              "title": "EU",
+              "value": "eu"
+            },
+            {
+              "title": "US",
+              "value": "us"
+            }
+          ]
+        },
+        {
+          "name": "imageSize",
+          "title": "Size",
+          "description": "Default image size.",
+          "type": "dropdown",
+          "required": false,
+          "default": "auto",
+          "data": [
+            {
+              "title": "Auto",
+              "value": "auto"
+            },
+            {
+              "title": "Square (1024×1024)",
+              "value": "1024x1024"
+            },
+            {
+              "title": "Landscape (1536×1024)",
+              "value": "1536x1024"
+            },
+            {
+              "title": "Portrait (1024×1536)",
+              "value": "1024x1536"
+            }
+          ]
+        },
+        {
+          "name": "imageQuality",
+          "title": "Quality",
+          "description": "Default image quality.",
+          "type": "dropdown",
+          "required": false,
+          "default": "auto",
+          "data": [
+            {
+              "title": "Auto",
+              "value": "auto"
+            },
+            {
+              "title": "Low",
+              "value": "low"
+            },
+            {
+              "title": "Medium",
+              "value": "medium"
+            },
+            {
+              "title": "High",
+              "value": "high"
+            }
+          ]
+        }
       ]
     },
     {
@@ -196,7 +270,8 @@
       "title": "Browse Generated Images",
       "subtitle": "Langdock",
       "description": "Browse, copy and reuse images you generated.",
-      "mode": "view"
+      "mode": "view",
+      "disabledByDefault": true
     },
     {
       "name": "scheduled-tasks",
@@ -210,7 +285,8 @@
       "title": "Create Scheduled Task",
       "subtitle": "Langdock",
       "description": "Create a Langdock scheduled task that runs a prompt on a schedule.",
-      "mode": "view"
+      "mode": "view",
+      "disabledByDefault": true
     },
     {
       "name": "workflows",
@@ -224,7 +300,8 @@
       "title": "Run Integration Action",
       "subtitle": "Langdock",
       "description": "Run an action of a Langdock integration with your connection.",
-      "mode": "view"
+      "mode": "view",
+      "disabledByDefault": true
     },
     {
       "name": "open-langdock",
@@ -232,22 +309,15 @@
       "subtitle": "Langdock",
       "description": "Open the Langdock desktop app, or the web app if it is not installed.",
       "mode": "no-view"
-    },
-    {
-      "name": "settings",
-      "title": "Langdock Settings",
-      "subtitle": "Langdock",
-      "description": "Manage your API key, default models and image options, and check which Langdock APIs your key can use.",
-      "mode": "view"
     }
   ],
   "preferences": [
     {
       "name": "apiKey",
       "title": "API Key",
-      "description": "Personal or workspace API key from Langdock (Settings → Account → API keys). Langdock Settings shows which features the key can use.",
+      "description": "Personal or workspace API key from Langdock (Settings → Account → API keys). See the setup notes for the scopes each command needs.",
       "type": "password",
-      "required": false
+      "required": true
     },
     {
       "name": "apiBaseUrl",
@@ -256,6 +326,15 @@
       "type": "textfield",
       "required": false,
       "default": "https://api.langdock.com"
+    },
+    {
+      "name": "webSearch",
+      "title": "Web Search",
+      "label": "Let Langdock search the web",
+      "description": "Lets chat answers use web search.",
+      "type": "checkbox",
+      "required": false,
+      "default": false
     }
   ],
   "dependencies": {

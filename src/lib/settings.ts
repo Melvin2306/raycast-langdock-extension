@@ -1,28 +1,18 @@
-import { LocalStorage } from "@raycast/api";
 import { useLocalStorage } from "@raycast/utils";
+import { getPreferenceValues, LocalStorage } from "@raycast/api";
 import { AUTO_MODEL, ImageQuality, ImageRegion, ImageSize } from "./langdock";
 
-// Settings that depend on workspace data (models) live here instead of in Raycast preferences,
-// which only support static dropdowns. Credentials stay in preferences.
+// Defaults that depend on workspace data (the model lists) are stored here; Raycast preferences only support
+// static dropdowns. Users change them with the "Set as Default" actions.
 
 export interface Settings {
   /** AUTO_MODEL or a model id from the models API. */
   chatModel: string;
-  webSearch: boolean;
   /** Unset means the first image model available in the region. */
   imageModel?: string;
-  imageRegion: ImageRegion;
-  imageSize: ImageSize;
-  imageQuality: ImageQuality;
 }
 
-export const DEFAULT_SETTINGS: Settings = {
-  chatModel: AUTO_MODEL,
-  webSearch: false,
-  imageRegion: "eu",
-  imageSize: "auto",
-  imageQuality: "auto",
-};
+export const DEFAULT_SETTINGS: Settings = { chatModel: AUTO_MODEL };
 
 const SETTINGS_KEY = "settings";
 export const SAVED_AGENTS_KEY = "saved-agents";
@@ -42,10 +32,16 @@ export const IMAGE_QUALITIES: { value: ImageQuality; title: string }[] = [
   { value: "high", title: "High" },
 ];
 
-export const IMAGE_REGIONS: { value: ImageRegion; title: string }[] = [
-  { value: "eu", title: "🇪🇺 EU" },
-  { value: "us", title: "🇺🇸 US" },
-];
+/** Whether chat answers may use web search (extension preference). */
+export function webSearchEnabled(): boolean {
+  return getPreferenceValues<Preferences>().webSearch ?? false;
+}
+
+/** Image options from the Generate Image command preferences. */
+export function imagePreferences(): { region: ImageRegion; size: ImageSize; quality: ImageQuality } {
+  const prefs = getPreferenceValues<Preferences.GenerateImage>();
+  return { region: prefs.imageRegion ?? "eu", size: prefs.imageSize ?? "auto", quality: prefs.imageQuality ?? "auto" };
+}
 
 export async function getSettings(): Promise<Settings> {
   const raw = await LocalStorage.getItem<string>(SETTINGS_KEY);

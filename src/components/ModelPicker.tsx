@@ -1,6 +1,6 @@
-import { Action, ActionPanel, Color, Form, Icon, List, useNavigation } from "@raycast/api";
+import { Action, ActionPanel, Color, Form, Icon, List, showHUD, useNavigation } from "@raycast/api";
 import { useState } from "react";
-import { showFailureToast, useCachedPromise } from "@raycast/utils";
+import { useCachedPromise } from "@raycast/utils";
 import { AUTO_MODEL, isAutoModel, listModels, matchModel, Model } from "../lib/langdock";
 import { useSettings } from "../lib/settings";
 import {
@@ -15,13 +15,26 @@ import {
   regionLabel,
 } from "../lib/models";
 import { escapeMarkdown } from "../lib/markdown";
+import { showLangdockError } from "../lib/errors";
 
 export function ModelPicker(props: { selectedModelId?: string; onSelect: (modelId: string) => void }) {
   const { pop } = useNavigation();
   const [isShowingDetail, setIsShowingDetail] = useState(false);
+  const { settings, update } = useSettings();
+  const setDefault = (modelId: string, label: string) => (
+    <Action
+      title="Set as Default Model"
+      icon={Icon.Star}
+      shortcut={{ modifiers: ["cmd", "shift"], key: "d" }}
+      onAction={async () => {
+        await update({ chatModel: modelId });
+        await showHUD(`${label} is now the default model`);
+      }}
+    />
+  );
   const { data: models, isLoading } = useCachedPromise(listModels, [], {
     onError: (error) => {
-      showFailureToast(error, { title: "Could not load models" });
+      showLangdockError(error, { title: "Could not load models" });
     },
   });
 
@@ -59,6 +72,7 @@ export function ModelPicker(props: { selectedModelId?: string; onSelect: (modelI
         actions={
           <ActionPanel>
             <Action title="Use Model" icon={Icon.Checkmark} onAction={() => select(AUTO_MODEL)} />
+            {settings.chatModel !== AUTO_MODEL && setDefault(AUTO_MODEL, "Auto")}
             {detailAction}
           </ActionPanel>
         }
@@ -80,6 +94,7 @@ export function ModelPicker(props: { selectedModelId?: string; onSelect: (modelI
               actions={
                 <ActionPanel>
                   <Action title="Use Model" icon={Icon.Checkmark} onAction={() => select(model.id)} />
+                  {settings.chatModel !== model.id && setDefault(model.id, displayName(model))}
                   {detailAction}
                   <Action.CopyToClipboard title="Copy Model ID" content={model.id} />
                 </ActionPanel>
@@ -92,7 +107,7 @@ export function ModelPicker(props: { selectedModelId?: string; onSelect: (modelI
   );
 }
 
-/** Model dropdown for forms. Starts on the default model from Langdock Settings (Auto unless changed). */
+/** Model dropdown for forms. Starts on the default chat model (Auto unless changed with Set as Default Model). */
 export function ModelDropdown(props: { value?: string; onChange: (modelId: string) => void }) {
   const { data: models, isLoading } = useCachedPromise(listModels, []);
   const { settings, isLoading: isLoadingSettings } = useSettings();

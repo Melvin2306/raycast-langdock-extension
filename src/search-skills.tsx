@@ -1,13 +1,13 @@
 import { Action, ActionPanel, Icon, List, useNavigation } from "@raycast/api";
-import { showFailureToast, useCachedPromise } from "@raycast/utils";
+import { useCachedPromise } from "@raycast/utils";
 import { useState } from "react";
-import { ApiKeyMissing } from "./components/ApiKeyMissing";
 import { AskForm, Chat } from "./components/Chat";
-import { apiKey, listSkills, Skill } from "./lib/langdock";
+import { listSkills, Skill } from "./lib/langdock";
 import { escapeMarkdown, sanitizeMarkdown, wrapUntrusted } from "./lib/markdown";
+import { showLangdockError } from "./lib/errors";
 
 export default function Command() {
-  return apiKey() ? <SearchSkills /> : <ApiKeyMissing />;
+  return <SearchSkills />;
 }
 
 function SearchSkills() {
@@ -16,7 +16,7 @@ function SearchSkills() {
   const { data: skills, isLoading } = useCachedPromise(listSkills, [query], {
     keepPreviousData: true,
     onError: (error) => {
-      showFailureToast(error, { title: "Could not load skills" });
+      showLangdockError(error, { title: "Could not load skills" });
     },
   });
 
