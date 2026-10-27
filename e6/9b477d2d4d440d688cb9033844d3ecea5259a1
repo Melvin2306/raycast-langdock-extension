@@ -1,0 +1,163 @@
+.gitignore
+  s_9ac13be69c26c7::t_6855cfb4bad6ee 1-9
+.prettierrc
+  s_9ac13be69c26c7::t_1d175cd366c274 1-4
+CHANGELOG.md
+  s_9ac13be69c26c7::t_56188c34ed57bd 1-14
+README.md
+  s_9ac13be69c26c7::t_1ae8bb46b332a1 1-61
+assets/providers/amazon.svg
+  s_9ac13be69c26c7::t_f82b9956c6eb46 1-25
+assets/providers/amazon@dark.svg
+  s_9ac13be69c26c7::t_5c308dcf755987 1-7
+assets/providers/anthropic.svg
+  s_9ac13be69c26c7::t_df00b3efa8097a 1-7
+assets/providers/anthropic@dark.svg
+  s_9ac13be69c26c7::t_bb294b0a4fdd6e 1-7
+assets/providers/auto.svg
+  s_9ac13be69c26c7::t_9ba4faf5cfcd2e 1
+assets/providers/auto@dark.svg
+  s_9ac13be69c26c7::t_95cb8febdb8452 1
+assets/providers/blackforestlabs.svg
+  s_9ac13be69c26c7::t_52e5cb6b5d21e6 1-26
+assets/providers/blackforestlabs@dark.svg
+  s_9ac13be69c26c7::t_49e3f832601c63 1-26
+assets/providers/deepseek.svg
+  s_9ac13be69c26c7::t_4213df4de29e9c 1
+assets/providers/deepseek@dark.svg
+  s_9ac13be69c26c7::t_21239ca8744e79 1-10
+assets/providers/google.svg
+  s_9ac13be69c26c7::t_7c10dd49f913d3 1
+assets/providers/google@dark.svg
+  s_9ac13be69c26c7::t_dc99ddd1e1e630 1
+assets/providers/meta.svg
+  s_9ac13be69c26c7::t_4c6d8f95706dfd 1-26
+assets/providers/meta@dark.svg
+  s_9ac13be69c26c7::t_da49b54f570fb1 1-26
+assets/providers/microsoft.svg
+  s_9ac13be69c26c7::t_927ee4f58ca304 1
+assets/providers/microsoft@dark.svg
+  s_9ac13be69c26c7::t_149e6ce8ee5888 1
+assets/providers/mistral.svg
+  s_9ac13be69c26c7::t_bbc90357e45ae3 1-19
+assets/providers/mistral@dark.svg
+  s_9ac13be69c26c7::t_6fa8e33e194600 1-19
+assets/providers/openai.svg
+  s_9ac13be69c26c7::t_46a9c77017fe96 1-3
+assets/providers/openai@dark.svg
+  s_9ac13be69c26c7::t_74d882f3912b49 1-3
+assets/providers/perplexity.svg
+  s_9ac13be69c26c7::t_eefa03009bbbb0 1
+assets/providers/perplexity@dark.svg
+  s_9ac13be69c26c7::t_069ad4947568ac 1
+assets/providers/unknown.svg
+  s_9ac13be69c26c7::t_8b60195d3e67c6 1-3
+assets/providers/unknown@dark.svg
+  s_9ac13be69c26c7::t_a18588adf9239b 1-3
+eslint.config.js
+  s_9ac13be69c26c7::t_851620f4a45ae2 1-4
+package-lock.json
+  s_9ac13be69c26c7::t_261c06cde23737 1-3069
+package.json
+  s_9ac13be69c26c7::t_3638c6c62df4e5 1-233
+scripts/raycast-stub.ts
+  s_9ac13be69c26c7::t_710e04c07c459f 1-8
+scripts/smoke-test.ts
+  s_9ac13be69c26c7::t_f25fe753935ea0 1-196
+scripts/test.mjs
+  s_9ac13be69c26c7::t_dca17c31363927 1-26
+src/ask-about-files.tsx
+  s_9ac13be69c26c7::t_42bda23e5f371f 1-71
+src/ask-about-selection.tsx
+  s_9ac13be69c26c7::t_1d8e9ce6beda12 1-15
+src/ask-agent.tsx
+  s_9ac13be69c26c7::t_eaf009766c741f 1-231
+src/ask-langdock.tsx
+  s_9ac13be69c26c7::t_cac14f92f50ae4 1-25
+src/chat-history.tsx
+  s_9ac13be69c26c7::t_96cfd48e79bc2f 1-97
+src/components/ApiKeyMissing.tsx
+  s_9ac13be69c26c7::t_3da4f917ec5322 1-29
+src/components/Chat.tsx
+  s_9ac13be69c26c7::t_a39ed9e094278a 1-322
+src/components/ImageGeneration.tsx
+  s_9ac13be69c26c7::t_ac1b1590874bf1 1-340
+src/components/ModelPicker.tsx
+  s_9ac13be69c26c7::t_6ed6bfd1deff02 1-160
+src/components/SelectionChat.tsx
+  s_9ac13be69c26c7::t_44b65fc6b5ecaf 1-66
+src/explain-selection.tsx
+  s_9ac13be69c26c7::t_4b5bf4448d8602 1-13
+src/generate-image.tsx
+  s_9ac13be69c26c7::t_1e129722773dbf 1-28
+src/image-history.tsx
+  s_9ac13be69c26c7::t_f4fad0fd9d288b 1-107
+src/improve-writing.tsx
+  s_9ac13be69c26c7::t_a32484ab127538 1-14
+src/lib/history.ts
+  s_9ac13be69c26c7::t_0534b9c64c96f2 1-103
+src/lib/images.ts
+  s_9ac13be69c26c7::t_ef1c64f873b72c 1-59
+src/lib/langdock.ts
+  s_9ac13be69c26c7::t_0615513ef181ee 1-726
+src/lib/markdown.ts
+  s_9ac13be69c26c7::t_44e69d2ea2ced9 1-79
+src/lib/model-catalog.json
+  s_9ac13be69c26c7::t_8dc464a4cdd1f9 1-619
+src/lib/models.ts
+  s_9ac13be69c26c7::t_606333eee3b66a 1-156
+src/lib/render.ts
+  s_9ac13be69c26c7::t_e82a34b8a44555 1-31
+src/lib/settings.ts
+  s_9ac13be69c26c7::t_f328908812e5a4 1-63
+src/open-langdock.ts
+  s_9ac13be69c26c7::t_9d4ae6578babe9 1-10
+src/scheduled-tasks.tsx
+  s_9ac13be69c26c7::t_3ca5877aa3cf96 1-142
+src/search-knowledge.tsx
+  s_9ac13be69c26c7::t_7dcd8c1a710c2b 1-88
+src/search-meetings.tsx
+  s_9ac13be69c26c7::t_395182e074859d 1-236
+src/search-prompts.tsx
+  s_9ac13be69c26c7::t_021cbf83e05898 1-58
+src/search-skills.tsx
+  s_9ac13be69c26c7::t_1f9fd472701a51 1-74
+src/settings.tsx
+  s_9ac13be69c26c7::t_2650b4a7fbf8c3 1-324
+src/summarize-selection.tsx
+  s_9ac13be69c26c7::t_f0dd64f9428ddc 1-13
+src/translate-selection.tsx
+  s_9ac13be69c26c7::t_d388aa873133a1 1-17
+src/workflows.tsx
+  s_9ac13be69c26c7::t_7741caec36e70e 1-138
+tests/history.test.ts
+  s_9ac13be69c26c7::t_867af5e6889708 1-68
+tests/langdock.test.ts
+  s_9ac13be69c26c7::t_c745a0c16cbee9 1-200
+tests/markdown.test.ts
+  s_9ac13be69c26c7::t_bb4a25faec4cbb 1-74
+tests/models.test.ts
+  s_9ac13be69c26c7::t_a422ebef0d80e9 1-30
+tests/raycast-mock.ts
+  s_9ac13be69c26c7::t_cfac3effbdf9e1 1-14
+tests/render.test.ts
+  s_9ac13be69c26c7::t_0fda48663a0061 1-18
+tsconfig.json
+  s_9ac13be69c26c7::t_2899233516c04b 1-16
+---
+{
+  "schema_version": "authorship/3.0.0",
+  "git_ai_version": "1.7.5",
+  "base_commit_sha": "e69b477d2d4d440d688cb9033844d3ecea5259a1",
+  "prompts": {},
+  "sessions": {
+    "s_9ac13be69c26c7": {
+      "agent_id": {
+        "tool": "claude",
+        "id": "7c8ecb52-8546-4c5d-8bc9-3fdbb2089820",
+        "model": "claude-opus-5-5"
+      },
+      "human_author": "Melvin Rinkleff <melvin.rinkleff@gmx.de>"
+    }
+  }
+}
