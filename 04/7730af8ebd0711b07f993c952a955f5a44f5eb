@@ -1,0 +1,23 @@
+README.md
+  s_9ac13be69c26c7::t_608dcf58f2331e 53
+package.json
+  s_9ac13be69c26c7::t_8f50c630861085 59-60,137-138,145-146,153-154,161-162,169-170,185-186,288-289,304-305,320-321
+src/chat-history.tsx
+  s_9ac13be69c26c7::t_c25de328d9b32c 6-7,53,98-101
+---
+{
+  "schema_version": "authorship/3.0.0",
+  "git_ai_version": "1.7.5",
+  "base_commit_sha": "047730af8ebd0711b07f993c952a955f5a44f5eb",
+  "prompts": {},
+  "sessions": {
+    "s_9ac13be69c26c7": {
+      "agent_id": {
+        "tool": "claude",
+        "id": "7c8ecb52-8546-4c5d-8bc9-3fdbb2089820",
+        "model": "unknown"
+      },
+      "human_author": "Melvin Rinkleff <melvin.rinkleff@gmx.de>"
+    }
+  }
+}
