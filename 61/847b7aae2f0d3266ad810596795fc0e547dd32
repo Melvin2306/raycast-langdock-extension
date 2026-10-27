@@ -1,0 +1,22 @@
+src/lib/langdock.ts
+  s_9ac13be69c26c7::t_7caafd2bd9b2ce 535,537-546
+tests/langdock.test.ts
+  s_9ac13be69c26c7::t_7caafd2bd9b2ce 14,268-290
+  s_9ac13be69c26c7::t_b12e598d67f875 291
+---
+{
+  "schema_version": "authorship/3.0.0",
+  "git_ai_version": "1.7.5",
+  "base_commit_sha": "61847b7aae2f0d3266ad810596795fc0e547dd32",
+  "prompts": {},
+  "sessions": {
+    "s_9ac13be69c26c7": {
+      "agent_id": {
+        "tool": "claude",
+        "id": "7c8ecb52-8546-4c5d-8bc9-3fdbb2089820",
+        "model": "claude-opus-5-5"
+      },
+      "human_author": "Melvin Rinkleff <melvin.rinkleff@gmx.de>"
+    }
+  }
+}
