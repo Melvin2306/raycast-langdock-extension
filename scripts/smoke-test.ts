@@ -4,8 +4,12 @@
  *
  *   LANGDOCK_API_KEY=… npm run smoke-test            read-only checks plus two tiny chat requests
  *   LANGDOCK_API_KEY=… npm run smoke-test -- --all   also generates one image and uploads one small file
+ *
+ * It asks for confirmation first, because the requests count toward your Langdock usage and may cost money.
+ * Pass --yes to skip the question (e.g. in scripts).
  */
 import { writeFile } from "node:fs/promises";
+import { createInterface } from "node:readline/promises";
 import { tmpdir } from "node:os";
 import { join } from "node:path";
 import {
@@ -30,6 +34,7 @@ import {
 import { catalogEntry, displayName, providerName } from "../src/lib/models";
 
 const all = process.argv.includes("--all");
+const yes = process.argv.includes("--yes");
 let failures = 0;
 
 async function step<T>(name: string, run: () => Promise<T>, describe: (value: T) => string = () => "") {
@@ -69,7 +74,37 @@ if (!process.env.LANGDOCK_API_KEY) {
   console.error("Set LANGDOCK_API_KEY first.");
   process.exit(1);
 }
-console.log(`API: ${process.env.LANGDOCK_API_BASE_URL ?? "https://api.langdock.com"}\n`);
+const target = process.env.LANGDOCK_API_BASE_URL ?? "https://api.langdock.com";
+console.log(`API: ${target}\n`);
+
+/** Real requests cost money, so the run only starts after an explicit yes. */
+async function confirmCosts(): Promise<boolean> {
+  console.log("This test sends real requests to the API above with your API key:");
+  console.log("  • read-only checks (models, agents, prompts, knowledge, meetings, workflows, …)");
+  console.log("  • 2–3 small chat requests");
+  if (all) console.log("  • 1 image generation and 1 file upload (--all)");
+  console.log("\n⚠️  These count toward your Langdock usage and may cost money.\n");
+  if (yes) return true;
+  if (!process.stdin.isTTY) {
+    console.error("No terminal to confirm in. Re-run with --yes to accept the costs.");
+    return false;
+  }
+  const prompt = createInterface({ input: process.stdin, output: process.stdout });
+  try {
+    const answer = await prompt.question("Continue? [y/N] ");
+    return /^y(es)?$/i.test(answer.trim());
+  } catch {
+    // Input closed (e.g. Ctrl-D) before an answer: treat as no.
+    return false;
+  } finally {
+    prompt.close();
+  }
+}
+
+if (!(await confirmCosts())) {
+  console.log("Cancelled. No requests were sent.");
+  process.exit(1);
+}
 
 console.log("API access");
 for (const capability of API_CAPABILITIES) {

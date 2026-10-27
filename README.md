@@ -56,6 +56,7 @@ npm run lint
 npm run build
 npm test        # unit tests (markdown safety, API client, history, model names)
 
-# Check the API client against a real workspace (two tiny chat requests; --all also creates one image and uploads one small file)
+# Check the API client against a real workspace. Asks for confirmation first, since requests may cost money
+# (2–3 small chat requests; --all also creates one image and uploads one small file; --yes skips the question).
 LANGDOCK_API_KEY=… npm run smoke-test
 ```
