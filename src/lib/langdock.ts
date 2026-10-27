@@ -532,12 +532,18 @@ export interface Skill {
   updatedAt: string;
 }
 
+/** Lists skills, following pages up to 1000 so large workspaces show all of them. */
 export async function listSkills(query: string): Promise<Skill[]> {
-  const params = new URLSearchParams({ limit: "100" });
-  if (query) params.set("query", query);
-  const response = await request(`/skills/v1?${params}`);
-  const json = (await response.json()) as { skills: Skill[] };
-  return json.skills;
+  const skills: Skill[] = [];
+  let cursor: string | undefined;
+  do {
+    const params = new URLSearchParams({ limit: "250", ...(query ? { query } : {}), ...(cursor ? { cursor } : {}) });
+    const response = await request(`/skills/v1?${params}`);
+    const json = (await response.json()) as { skills: Skill[]; nextCursor?: string };
+    skills.push(...json.skills);
+    cursor = json.skills.length > 0 ? json.nextCursor : undefined;
+  } while (cursor && skills.length < 1000);
+  return skills;
 }
 
 // Meetings (Langdock meeting recorder)

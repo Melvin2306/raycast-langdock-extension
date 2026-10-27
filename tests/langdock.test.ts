@@ -11,6 +11,7 @@ import {
   LangdockError,
   listAgents,
   listImageModels,
+  listSkills,
   parseApiBaseUrl,
   parseImageModels,
   streamChat,
@@ -263,4 +264,28 @@ test("an invalid base URL is reported as a preferences problem", async () => {
   preferences.apiBaseUrl = "http://ld.example.com";
   await assert.rejects(listAgents(), (error: unknown) => error instanceof LangdockError && error.isConfigError);
   preferences.apiBaseUrl = before;
+});
+
+test("skills are listed across pages", async () => {
+  handler = (req, _body, res) => {
+    const cursor = new URL(req.url ?? "", "http://x").searchParams.get("cursor");
+    json(
+      res,
+      200,
+      cursor
+        ? { skills: [{ id: "s3", name: "C" }] }
+        : {
+            skills: [
+              { id: "s1", name: "A" },
+              { id: "s2", name: "B" },
+            ],
+            nextCursor: "s2",
+          },
+    );
+  };
+  assert.deepEqual(
+    (await listSkills("")).map((s) => s.id),
+    ["s1", "s2", "s3"],
+  );
+  assert.match(requests.at(-1)!.url, /limit=250&cursor=s2/);
 });
